@@ -387,3 +387,136 @@ body.light-theme {
   font-size: var(--font-size-md);
 }
 
+.sidebar{
+  background-color: var(--secondary-background-color);
+  padding: 2.5rem;
+}
+
+.trending-news-box{
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding-block: 2rem;
+  border: 1px solid --transparent-dark-color;
+}
+
+.trending-news-box:last-of-type{
+  border-bottom: none;
+}
+
+.trending-news-image-box{
+  position: relative;
+  width: 100%;
+  height: var(--item-min-height-sm);
+}
+
+.featured-content-title{
+  font-size: var(--font-size-md);
+  text-align: center;
+  padding: 1rem;
+}
+
+.trending-number{
+  position: absolute;
+  top: -1rem;
+  left: -1rem;
+  width: 3rem;
+  height: 3rem;
+  z-index: 15;
+  background-color: var(--secondary-background-color);
+  color: var(--light-color);
+  border-radius: 50%;
+}
+
+.trending-news-data .article-title{
+  font-size: var(--font-size-sm); 
+}
+
+.trending-news-box:hover .article-title{
+  color: var(--light-color-alt);
+}
+
+.section-title{
+  position: relative;
+  font-size: var(--font-size-md);
+  margin-bottom: 6rem;
+}
+
+.section-title::before{
+  content: attr(data-name);
+  font-size: var(--font-size-lg);
+  text-transform: uppercase;
+  opacity: .1;
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+}
+
+.article.swiper-slide{
+  height: 40rem;
+}
+
+.swiper-wrapper{
+  height: auto;
+}
+
+.swiper-controls{
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--secondary-background-color);
+}
+
+.swiper-controls::after{
+  font-size: 1.6rem;
+  color: var(--light-color);
+}
+
+.swiper-pagination{
+  bottom: .5rem !important;
+}
+
+.swiper-pagination-bullet{
+  background-color: var(--light-color);
+}
+
+.older-posts-grid-wrapper{
+  gap: var(--gap);
+}
+
+.older-posts-article-image-wrapper,
+.older-posts .article{
+  min-height: var(--item-min-height-sm);
+}
+
+.older-posts .article{
+  background-color: var(--secondary-background-color);
+}
+
+.older-posts-article-image-wrapper{
+  position: relative;
+}
+
+.older-posts-grid-wrapper .article-data-container{
+  position: static;
+  background-color: transparent;
+}
+
+.older-posts-grid-wrapper .article-title{
+  margin-bottom: var(--margin-sm);
+}
+
+.see-more-container{
+  margin-top: var(--margin-md);
+}
+
+.see-more-btn{
+  text-transform: uppercase;
+}
+
+.see-more-btn i{
+  transition: transform .25s;
+}
+
+.see-more-btn:hover i{
+  transform: translateX(.5rem);
+}
