@@ -46,6 +46,8 @@ const currentTheme = localStorage.getItem("currentTheme");
 
 //checking for theme in local storage
 //TODO make it works from backend not frontend
+//Or maybe make it stay here so yes good luck malding and reading tht code
+
 if (currentTheme) {
   bodyElement.classList.toggle("light-theme");
 }

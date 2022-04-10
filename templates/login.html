@@ -1,0 +1,35 @@
+<!--TODO Change design for remember me button and fix form.input-->
+{% extends 'base.html' %} {% block content %}
+<section class="login-form section-header-offset">
+    <div class="login-form-container container">
+        <div class="login-form-data">
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.email.label }}<br>
+                    {{ form.email(class="form-input", type="email") }}<br>
+                    {% for error in form.email.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.password.label }}<br>
+                    {{ form.password(class="form-input", type="password") }}<br>
+                    {% for error in form.password.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+                <div class="btn sign-up-btn fancy-border">
+                    <span>{{ form.submit(type="submit") }}</span>
+                </div>
+                <div class="error-message">{{ message }}</div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
