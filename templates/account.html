@@ -1,0 +1,21 @@
+{% extends 'base.html' %} {% block content %}
+<section class="account-page section-header-offset">
+    <div class="account-page container">
+        <div class="account-page-data">
+            <p>
+                User name : {{current_user.name}}
+                
+            </p>
+            <p>
+                User id : {{current_user.id}}
+            </p>
+            
+            
+            
+            
+            <div class="btn sign-up-btn fancy-border">Logout</div>
+        </div>
+        
+    </div>
+</section>
+{% endblock %}

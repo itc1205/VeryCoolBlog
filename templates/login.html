@@ -3,7 +3,7 @@
 <section class="login-form section-header-offset">
     <div class="login-form-container container">
         <div class="login-form-data">
-            <form action="" method="post">
+            <form class="form-box" action="" method="post">
                 {{ form.hidden_tag() }}
                 <p>
                     {{ form.email.label }}<br>
@@ -27,7 +27,9 @@
                 <div class="btn sign-up-btn fancy-border">
                     <span>{{ form.submit(type="submit") }}</span>
                 </div>
+                {% if message %}
                 <div class="error-message">{{ message }}</div>
+                {% endif %}
             </form>
         </div>
     </div>

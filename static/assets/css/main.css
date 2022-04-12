@@ -737,6 +737,7 @@ body.light-theme{
 }
 
 /* Login */
+
 .login-form{
     padding-bottom: 5rem;
 }
@@ -763,10 +764,76 @@ body.light-theme{
     margin-bottom: .5rem;
 }
 
+/* messages */
+
 .error-message{
     padding-block: .5rem;
     background-color: var(--secondary-background-color);
-    box-shadow: 4px 4px 0px 0px rgba(255, 0, 0, 1);
+    box-shadow: 4px 4px 0px 0px rgb(255, 51, 0);
+}
+
+.success-message{
+    padding-block: .5rem;
+    background-color: var(--secondary-background-color);
+    box-shadow: 4px 4px 0px 0px rgb(115, 255, 0);
+}
+/* Register */
+
+.register-form{
+    padding-bottom: 5rem;
+}
+
+.register-form .container{
+    max-width: 90rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+}
+
+.register-form-data{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-block: 2.5rem;
+}
+
+.register-form-data .btn{
+    width: auto;
+    margin: auto;
+    margin-bottom: .5rem;
+}
+
+.form-box{
+    border-style: solid;
+}
+
+/* Account page */
+.account-page{
+    padding-bottom: 5rem;
+}
+
+.account-page .container{
+    max-width: 90rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+}
+
+.account-page-data{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-block: 2.5rem;
+}
+
+.account-page-data .btn{
+    width: auto;
+    margin: auto;
+    margin-bottom: .5rem;
 }
 
 @media screen and (min-width: 700px) {
