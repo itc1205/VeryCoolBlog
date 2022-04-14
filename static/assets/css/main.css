@@ -769,7 +769,7 @@ body.light-theme{
 .error-message{
     padding-block: .5rem;
     background-color: var(--secondary-background-color);
-    box-shadow: 4px 4px 0px 0px rgb(255, 51, 0);
+    box-shadow: 4px 4px 0px 0px rgb(247, 88, 26);
 }
 
 .success-message{
@@ -834,6 +834,27 @@ body.light-theme{
     width: auto;
     margin: auto;
     margin-bottom: .5rem;
+}
+
+/* Error handling */
+.error{
+    margin-bottom: 5rem;
+}
+
+.error-data{
+    padding-bottom: 10rem;
+    width: fit-content;
+}
+
+.error-number{
+    font-size: var(--font-size-xl);
+    text-align: center;
+}
+
+.error-message{
+    font-size: var(--font-size-md);
+    text-align: center;
+    padding: 0.5rem;
 }
 
 @media screen and (min-width: 700px) {
