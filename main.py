@@ -42,8 +42,9 @@ def handle_not_found(e):
 def genius_handle(e):
     error = {
         "number": 500,
-        "message": "Еблан блять тупорылый опять ctrl+s забыл прожать",
+        "message": "Server issue",
     }
+    return render_template('baseHtmlError.html', **error), 500
 
 
 @login_manager.user_loader
@@ -64,6 +65,7 @@ def post():
 
 
 class LoginForm(FlaskForm):
+    
     email = EmailField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
@@ -72,11 +74,14 @@ class LoginForm(FlaskForm):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    
     db_session.global_init("db/mainDB.sqlite")
     form = LoginForm()
+    
     params = {
         'form': form,
     }
+    
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
@@ -112,29 +117,36 @@ def registration():
     params = {
         'form': form
     }
+    
     if form.validate_on_submit():
 
         if form.password.data != form.repeat_password.data:
             return render_template('register.html', **params,
                                    message="Password does not match")
         db_sess = db_session.create_session()
+        
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', **params,
                                    message="User with this email is already exists")
+        
         if db_sess.query(User).filter(User.login == form.login.data).first():
             return render_template('register.html', **params,
                                    message="User with this login is already exists")
+        
         user = User(
             email=form.email.data,
             login=form.login.data,
             surname=form.surname.data,
             name=form.name.data,
         )
+        
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
+        
         return render_template('register.html', **params,
                                regComplete=True)
+    
     return render_template('register.html', **params)
 
 
@@ -143,7 +155,6 @@ def registration():
 def account(): 
     db_session.global_init("db/mainDB.sqlite") 
     db_sess = db_session.create_session() 
-    db_sess.query(User) 
     user = current_user
     print(user)
     params = { 
@@ -152,6 +163,16 @@ def account():
         "login": user.login,
     } 
     return render_template('account.html', **params) 
+
+@app.route('/create_new_post')
+@login_required
+def create_post():
+    db_session.global_init("db/mainDB.sqlite")
+    db_sess = db_session.create_session()
+    params = {
+
+    }
+    return render_template('postCreationPage.html', **params)
 
 if __name__ == "__main__": 
     main()
