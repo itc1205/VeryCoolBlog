@@ -1,0 +1,35 @@
+{% extends 'base.html' %} {% block content %}
+<section class="post-form section-header-offset">
+    <div class="post-form-container container">
+        <div class="post-form-data">
+            <form class="form-box" method="post">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.title.label }}<br>
+                    {{ form.title(class="form-input") }}<br>
+                    {% for error in form.title.errors %}
+                        <p class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.content.label }}<br>
+                    {{ form.content(class="form-input") }}<br>
+                    {% for error in form.content.errors %}
+                        <p content="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </p>
+                <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+                
+                {% if error %}
+                    <div class="error-message">{{message}}</div>
+
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

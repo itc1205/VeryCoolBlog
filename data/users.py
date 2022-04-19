@@ -1,7 +1,10 @@
 from datetime import datetime as dt
 
 from flask_login import UserMixin
+
 import sqlalchemy
+from sqlalchemy import orm
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .db_session import SqlAlchemyBase
@@ -18,6 +21,7 @@ class User(SqlAlchemyBase, UserMixin):
     login = sqlalchemy.Column(sqlalchemy.String, unique=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=dt.now)
+    news = orm.relation("News", back_populates='user')
 
     def __repr__(self):
         return f'---\nUser with id - {self.id}\n--- {self.name} {self.surname}\n---'
