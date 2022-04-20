@@ -18,9 +18,9 @@ class News(SqlAlchemyBase):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, 
                                      default=dt.now)
     
-    post_image = sqlalchemy.Column(sqlalchemy.String)
+    header_img = sqlalchemy.Column(sqlalchemy.String)
     
-    preview_image = sqlalchemy.Column(sqlalchemy.String)
+    preview_img = sqlalchemy.Column(sqlalchemy.String)
 
     user_id = sqlalchemy.Column(sqlalchemy.Integer, 
                                 sqlalchemy.ForeignKey("users.id"))

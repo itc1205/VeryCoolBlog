@@ -1,4 +1,6 @@
-from flask import Flask, render_template, redirect
+from os import mkdir, listdir
+
+from flask import Flask, render_template, redirect, request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import FlaskForm
 
@@ -17,16 +19,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'nice'
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+USER_IMAGE_PATH = 'static/assets/user_images'
 
 def main():
     db_session.global_init("db/mainDB.sqlite")
     app.run()
 
-def returnLinkToImage():
-    
-    link = str()
-    return link
 
 ##############################################
 #Error handling
@@ -178,21 +176,40 @@ class CreatePostForm(FlaskForm):
 def createPost():
 
     form = CreatePostForm()
-    
+    params = {
+        "form" : form,
+    }
+
     if form.validate_on_submit():
         
+        header_img = request.files['header_image']
+        header_img_path = f'{USER_IMAGE_PATH}/header_image_{len(listdir(f"{USER_IMAGE_PATH}/header_images")) + 1}.png'
+        with open(header_img_path, "wb") as file:
+            file.write(header_img.read())
+        
+        preview_img = request.files['preview_image']
+        preview_img_path = f'{USER_IMAGE_PATH}/preview_image_{len(listdir(f"{USER_IMAGE_PATH}/preview_images")) + 1}.png'
+        with open(preview_img_path, "wb") as file:
+            file.write(preview_img.read())
+
+
         db_session.global_init("db/mainDB.sqlite") 
         db_sess = db_session.create_session()
+        
         news = News()
+        news.header_img = header_img_path
+        news.preview_img = preview_img_path
         news.title = form.title.data
         news.content = form.content.data
+        
         current_user.news.append(news)
+        
         db_sess.merge(current_user)
         db_sess.commit()
         
         return redirect('/')
     
-    params = {"form" : form} 
+     
     
     return render_template('createNewPost.html', **params) 
 
