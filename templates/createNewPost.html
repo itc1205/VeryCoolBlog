@@ -2,7 +2,7 @@
 <section class="post-form section-header-offset">
     <div class="post-form-container container">
         <div class="post-form-data">
-            <form class="form-box" method="post" enctype="multipart/form-data">
+            <form class="form-box form" method="post" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <p>
                     {{ form.title.label }}<br>
@@ -23,7 +23,16 @@
                     {% endfor %}
                 </p>
                 <p>
-                    <label for="photo">header image</label><br>
+                    {{ form.short_description.label }}<br>
+                    {{ form.short_description(class="form-input") }}<br>
+                    {% for error in form.short_description.errors %}
+                        <p content="alert alert-danger" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </p>
+                <p>
+                    <label for="photo">Header image</label><br>
                     <input type="file" class="form-control-file" id="photo" name="header_image"><br>
                 </p>
                 <p>

@@ -1,15 +1,20 @@
-from os import mkdir, listdir
+from os import listdir
 
 from flask import Flask, render_template, redirect, request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import FlaskForm
 
+from sqlalchemy import desc
+
 from wtforms import PasswordField, StringField, IntegerField, EmailField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired
+
+from mail import sendEmail
 
 from data import db_session
 from data.users import User
 from data.news import News
+from data.subbedemails import SubEmail
 
 from datetime import datetime as dt
 
@@ -23,8 +28,12 @@ USER_IMAGE_PATH = 'static/assets/user_images'
 
 def main():
     db_session.global_init("db/mainDB.sqlite")
-    app.run()
+    app.run(host='0.0.0.0', port=80)
 
+def postCreated(post="New post has been created.\nGo and check it out"):
+    db_sess = db_session.create_session()
+    for email in db_sess.query(SubEmail):
+        sendEmail(email.email, post)
 
 ##############################################
 #Error handling
@@ -55,15 +64,43 @@ def genius_handle(e):
 ##############################################
 #Routes
 
-@app.route('/')
-@app.route('/home')
+@app.route('/', methods=["GET", "POST"])
+@app.route('/home', methods=["GET", "POST"])
 def index():
-    return render_template('index.html')
+    db_sess = db_session.create_session()
+    if request.method == "POST":
+        
+        email = request.form["email"]
+        
+        if db_sess.query(SubEmail).filter(SubEmail.email == email).first():
+            return redirect('/')
+        subEmail = SubEmail()
+        subEmail.email = email
+            
+        db_sess.add(subEmail)
+        db_sess.commit()
+            
+        sendEmail(email, text="Thanks for subscription")
+        return redirect('/')
+    
+    elif request.method == "GET":
+        params = {
+            "latest_posts" : db_sess.query(News).order_by(desc(News.created_date)).limit(3),
+            "trending_news" : db_sess.query(News).order_by(News.views_count).limit(5),
+            "older_posts" : db_sess.query(News).order_by(News.created_date).filter(
+                News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
+                    News.id.notin_(db_sess.query(News.id).order_by(News.views_count).limit(5))
+            ).limit(6)
+        }
+        return render_template('index.html', **params)
 
-
-@app.route('/post')
-def post():
-    return render_template('post.html')
+@app.route('/post<int:id>')
+def post(id):
+    db_sess = db_session.create_session()
+    params = {
+        "post": db_sess.query(News).filter(News.id == id).first(),
+    }
+    return render_template('post.html', **params)
 
 ##############################################
 #Login handling
@@ -83,7 +120,6 @@ class LoginForm(FlaskForm):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    db_session.global_init("db/mainDB.sqlite")
     form = LoginForm()
     params = {
         'form': form,
@@ -120,7 +156,6 @@ class RegistrationForm(FlaskForm):
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    db_session.global_init("db/mainDB.sqlite")
     form = RegistrationForm()
     params = {
         'form': form
@@ -151,11 +186,12 @@ def registration():
     return render_template('register.html', **params)
 
 
+##########################################
+# Account handle
+
 @app.route('/account') 
 @login_required
 def account(): 
-    db_session.global_init("db/mainDB.sqlite") 
-    db_sess = db_session.create_session() 
     user = current_user
     print(user)
     params = { 
@@ -165,9 +201,13 @@ def account():
     } 
     return render_template('account.html', **params) 
 
+#############################################
+# Posts creation
+
 class CreatePostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content')
+    content = TextAreaField('Content', validators=[DataRequired()])
+    short_description = TextAreaField('Short description', validators=[DataRequired()])
     submit = SubmitField('Submit post')
 
 
@@ -183,12 +223,12 @@ def createPost():
     if form.validate_on_submit():
         
         header_img = request.files['header_image']
-        header_img_path = f'{USER_IMAGE_PATH}/header_image_{len(listdir(f"{USER_IMAGE_PATH}/header_images")) + 1}.png'
+        header_img_path = f'{USER_IMAGE_PATH}/header_images/header_image_{len(listdir(f"{USER_IMAGE_PATH}/header_images")) + 1}.png'
         with open(header_img_path, "wb") as file:
             file.write(header_img.read())
         
         preview_img = request.files['preview_image']
-        preview_img_path = f'{USER_IMAGE_PATH}/preview_image_{len(listdir(f"{USER_IMAGE_PATH}/preview_images")) + 1}.png'
+        preview_img_path = f'{USER_IMAGE_PATH}/preview_images/preview_image_{len(listdir(f"{USER_IMAGE_PATH}/preview_images")) + 1}.png'
         with open(preview_img_path, "wb") as file:
             file.write(preview_img.read())
 
@@ -201,12 +241,14 @@ def createPost():
         news.preview_img = preview_img_path
         news.title = form.title.data
         news.content = form.content.data
-        
+        news.short_description = form.short_description.data
         current_user.news.append(news)
         
         db_sess.merge(current_user)
         db_sess.commit()
         
+        postCreated()
+
         return redirect('/')
     
      

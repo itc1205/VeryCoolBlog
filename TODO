@@ -1,0 +1,16 @@
+TODO:
+1. Fix footer on error screens
+
+2. Make an account page
+
+3. Rewrite index template to make news work
+3.1 Show the latest added news in recent news
+3.2 Show title of the last one news in hot news
+3.3 Make tags (5.) to news table so we can show news ordered by tags
+
+
+4. Make the possibility to edit the news
+
+5. Maybe add something to the news table (some new tags and etc.)
+
+6. try to work with emails and other things
