@@ -9,7 +9,7 @@
                     <h3 class="headline fancy-border">
                         <span class="place-items-center">Breaking news</span>
                     </h3>
-                    <span class="headline-description">Apple announces a new partnership...</span>
+                    <span class="headline-description">{{' '.join((breaking_post.content).split()[:5])}}...</span>
                 </div>
                 
                 {% for item in latest_posts %}
@@ -73,83 +73,20 @@
                 <!-- Additional required wrapper -->
                 <div class="swiper-wrapper">
                     <!-- Slides -->
-                    <a href="#" class="article swiper-slide">
-                        <img src="./assets/images/quick_read/quick_read_1.jpg" alt="" class="article-image">
+                    {% for item in quick_read %}
+                    <a href="/post{{item.id}}" class="article swiper-slide">
+                        <img src="{{item.preview_img}}" alt="" class="article-image">
 
                         <div class="article-data-container">
                             <div class="article-data">
-                                <span>23 Dec 2021</span>
+                                <span>{{item.created_date_string}}</span>
                                 <span class="article-data-spacer"></span>
-                                <span>3 Min read</span>
+                                <span>{{item.reading_time_in_minutes}} Min read</span>
                             </div>
-                            <h3 class="title article-title">Sample article title</h3>
+                            <h3 class="title article-title">{{item.title}}</h3>
                         </div>
                     </a>
-                    <!-- Slides -->
-                    <a href="#" class="article swiper-slide">
-                        <img src="./assets/images/quick_read/quick_read_2.jpg" alt="" class="article-image">
-
-                        <div class="article-data-container">
-                            <div class="article-data">
-                                <span>23 Dec 2021</span>
-                                <span class="article-data-spacer"></span>
-                                <span>3 Min read</span>
-                            </div>
-                            <h3 class="title article-title">Sample article title</h3>
-                        </div>
-                    </a>
-                    <!-- Slides -->
-                    <a href="#" class="article swiper-slide">
-                        <img src="./assets/images/quick_read/quick_read_3.jpg" alt="" class="article-image">
-
-                        <div class="article-data-container">
-                            <div class="article-data">
-                                <span>23 Dec 2021</span>
-                                <span class="article-data-spacer"></span>
-                                <span>3 Min read</span>
-                            </div>
-                            <h3 class="title article-title">Sample article title</h3>
-                        </div>
-                    </a>
-                    <!-- Slides -->
-                    <a href="#" class="article swiper-slide">
-                        <img src="./assets/images/quick_read/quick_read_4.jpg" alt="" class="article-image">
-
-                        <div class="article-data-container">
-                            <div class="article-data">
-                                <span>23 Dec 2021</span>
-                                <span class="article-data-spacer"></span>
-                                <span>3 Min read</span>
-                            </div>
-                            <h3 class="title article-title">Sample article title</h3>
-                        </div>
-                    </a>
-                    <!-- Slides -->
-                    <a href="#" class="article swiper-slide">
-                        <img src="./assets/images/quick_read/quick_read_5.jpg" alt="" class="article-image">
-
-                        <div class="article-data-container">
-                            <div class="article-data">
-                                <span>23 Dec 2021</span>
-                                <span class="article-data-spacer"></span>
-                                <span>3 Min read</span>
-                            </div>
-                            <h3 class="title article-title">Sample article title</h3>
-                        </div>
-                    </a>
-                    <!-- Slides -->
-                    <a href="#" class="article swiper-slide">
-                        <img src="./assets/images/quick_read/quick_read_6.jpg" alt="" class="article-image">
-
-                        <div class="article-data-container">
-                            <div class="article-data">
-                                <span>23 Dec 2021</span>
-                                <span class="article-data-spacer"></span>
-                                <span>3 Min read</span>
-                            </div>
-                            <h3 class="title article-title">Sample article title</h3>
-                        </div>
-                    </a>
+                    {% endfor %}           
                 </div>
                 <!-- Navigation buttons -->
                 <div class="swiper-button-prev swiper-controls"></div>
@@ -192,7 +129,7 @@
                 {% endfor %}
 
             <div class="see-more-container">
-                <a href="#" class="btn see-more-btn place-items-center">See more <i class="ri-arrow-right-s-line"></i></a>
+                <a href="/older_posts" class="btn see-more-btn place-items-center">See more <i class="ri-arrow-right-s-line"></i></a>
             </div>
 
         </div>
@@ -252,7 +189,7 @@
 
             <div class="form-container-inner">
                 <h6 class="title newsletter-title">Subscribe</h6>
-                <p class="newsletter-description">Lorem ipsum dolor sit amet consectetur adipisicing quaerat dignissimos.</p>
+                <p class="newsletter-description">Subscribe to our newsletter!</p>
 
                 <form method="post" enctype="multipart/form-data" class="form">
                     <input class="form-input" name="email" type="text" placeholder="Enter your email address">

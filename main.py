@@ -19,7 +19,7 @@ from data.subbedemails import SubEmail
 from datetime import datetime as dt
 
 ##############################################
-#App init
+# App init
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'nice'
 login_manager = LoginManager()
@@ -36,7 +36,7 @@ def postCreated(post="New post has been created.\nGo and check it out"):
         sendEmail(email.email, post)
 
 ##############################################
-#Error handling
+# Error handling
 @app.errorhandler(401)
 def handle_auth_error(e):
     error = {
@@ -62,7 +62,7 @@ def genius_handle(e):
     return render_template('baseHtmlError.html', **error), 500
 
 ##############################################
-#Routes
+# Base routes
 
 @app.route('/', methods=["GET", "POST"])
 @app.route('/home', methods=["GET", "POST"])
@@ -85,12 +85,14 @@ def index():
     
     elif request.method == "GET":
         params = {
+            "breaking_post" : db_sess.query(News).order_by(desc(News.created_date)).first() ,
             "latest_posts" : db_sess.query(News).order_by(desc(News.created_date)).limit(3),
             "trending_news" : db_sess.query(News).order_by(News.views_count).limit(5),
             "older_posts" : db_sess.query(News).order_by(News.created_date).filter(
                 News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
                     News.id.notin_(db_sess.query(News.id).order_by(News.views_count).limit(5))
-            ).limit(6)
+                ).limit(6),
+            "quick_read": db_sess.query(News).order_by(desc(News.reading_time_in_seconds)).limit(7)
         }
         return render_template('index.html', **params)
 
@@ -109,7 +111,7 @@ def post(id):
     return render_template('post.html', **params)
 
 ##############################################
-#Login handling
+# Login handling
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -148,7 +150,7 @@ def logout():
     return redirect('/home')
 
 ##############################################
-#Registration handling
+# Registration handling
 
 class RegistrationForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])
@@ -268,6 +270,21 @@ def createPost():
     
     return render_template('createNewPost.html', **params) 
 
+
+##############################################
+# Older posts route
+@app.route('/older_posts')
+def olderPosts():
+    db_sess = db_session.create_session()
+    params = {
+        "older_posts" : db_sess.query(News).order_by(News.created_date).filter(
+                News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
+                    News.id.notin_(db_sess.query(News.id).order_by(News.views_count).limit(5))
+                ).limit(6)
+    }
+    return render_template('olderPostsView.html' **params)
+
+@app.route('/search/<search_string>')
 
 if __name__ == "__main__": 
     main()

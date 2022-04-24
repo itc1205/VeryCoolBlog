@@ -703,9 +703,6 @@ body.light-theme{
 .author{
     margin-top: 5rem;
     gap: var(--gap);
-}
-
-.author{
     background-color: var(--secondary-background-color);
 }
 
@@ -776,13 +773,16 @@ body.light-theme{
 .error-message{
     padding-block: .5rem;
     background-color: var(--secondary-background-color);
-    box-shadow: 4px 4px 0px 0px rgb(247, 88, 26);
+    box-shadow: 4px 4px rgb(247, 88, 26);
 }
 
 .success-message{
     padding-block: .5rem;
     background-color: var(--secondary-background-color);
     box-shadow: 4px 4px 0px 0px rgb(115, 255, 0);
+    font-size: var(--font-size-md);
+    text-align: center;
+    padding: 0.5rem;
 }
 
 
@@ -830,12 +830,6 @@ body.light-theme{
 .error-number{
     font-size: var(--font-size-xl);
     text-align: center;
-}
-
-.error-message{
-    font-size: var(--font-size-md);
-    text-align: center;
-    padding: 0.5rem;
 }
 
 @media screen and (min-width: 700px) {
@@ -912,7 +906,7 @@ body.light-theme{
     }
 
     .blog-post-data img{
-        height: var(--item-min-height-md);;
+        height: var(--item-min-height-md);
     }
 }
 
