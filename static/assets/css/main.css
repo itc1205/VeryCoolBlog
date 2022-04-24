@@ -779,7 +779,7 @@ body.light-theme{
 .success-message{
     padding-block: .5rem;
     background-color: var(--secondary-background-color);
-    box-shadow: 4px 4px 0px 0px rgb(115, 255, 0);
+    box-shadow: 4px 4px rgb(115, 255, 0);
     font-size: var(--font-size-md);
     text-align: center;
     padding: 0.5rem;
