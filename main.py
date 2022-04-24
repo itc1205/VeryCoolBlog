@@ -96,10 +96,16 @@ def index():
 
 @app.route('/post<int:id>')
 def post(id):
+    
     db_sess = db_session.create_session()
+    
     params = {
         "post": db_sess.query(News).filter(News.id == id).first(),
     }
+    
+    params['post'].views_count += 1
+    db_sess.merge(params['post'])
+    db_sess.commit()
     return render_template('post.html', **params)
 
 ##############################################
@@ -166,9 +172,11 @@ def registration():
             return render_template('register.html', **params,
                                    message="Password does not match")
         db_sess = db_session.create_session()
+        
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', **params,
                                    message="User with this email is already exists")
+        
         if db_sess.query(User).filter(User.login == form.login.data).first():
             return render_template('register.html', **params,
                                    message="User with this login is already exists")
@@ -178,9 +186,12 @@ def registration():
             surname=form.surname.data,
             name=form.name.data,
         )
+
         user.set_password(form.password.data)
+        
         db_sess.add(user)
         db_sess.commit()
+        
         return render_template('register.html', **params,
                                regComplete=True)
     return render_template('register.html', **params)
@@ -221,7 +232,7 @@ def createPost():
     }
 
     if form.validate_on_submit():
-        
+
         header_img = request.files['header_image']
         header_img_path = f'{USER_IMAGE_PATH}/header_images/header_image_{len(listdir(f"{USER_IMAGE_PATH}/header_images")) + 1}.png'
         with open(header_img_path, "wb") as file:
@@ -232,21 +243,23 @@ def createPost():
         with open(preview_img_path, "wb") as file:
             file.write(preview_img.read())
 
-
         db_session.global_init("db/mainDB.sqlite") 
         db_sess = db_session.create_session()
-        
         news = News()
         news.header_img = header_img_path
         news.preview_img = preview_img_path
         news.title = form.title.data
         news.content = form.content.data
         news.short_description = form.short_description.data
+        news.reading_time_in_seconds = round(len(form.content.data.split())/3,35)
+        news.reading_time_in_minutes = round(len(form.content.data.split())/201) # Reading time in seconds
         current_user.news.append(news)
         
         db_sess.merge(current_user)
         db_sess.commit()
         
+       
+
         postCreated()
 
         return redirect('/')

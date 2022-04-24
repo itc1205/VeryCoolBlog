@@ -43,12 +43,16 @@
                     <li class="list-item">
                         <a href="#" class="list-link">Contact</a>
                     </li>
+                    {% if current_user.is_authenticated %}
+                    <li><a class="navbar-brand" href="/logout">{{ current_user.name }}</a></li> 
+                    {% else %}
                     <li class="list-item screen-lg-hidden">
                         <a href="login" class="list-link">Login</a>
                     </li>
                     <li class="list-item screen-lg-hidden">
                         <a href="register" class="list-link">Register</a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
 

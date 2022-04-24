@@ -6,10 +6,10 @@
                 <h3 class="title blog-post-title">{{post.title}}</h3>
                 <div class="article-data">
                     <!--TODO make a dt show correctly-->
-                    <span>Dec 6th 2021</span>
+                    <span>{{post.created_date_string}}</span>
                     <span class="article-data-spacer"></span>
                     <!--TODO calculate the reading time and move it into db-->
-                    <span>4 Min read</span>
+                    <span>{{post.reading_time_in_minutes}} Mins read</span>
                 </div>
                 <img src="{{post.header_img}}" alt="">
             </div>
@@ -25,6 +25,7 @@
                         <h3 class="author-name">{{post.user.name}} {{post.user.surname}}</h3>
                         <p><!--TODO make an user description--></p>
                         <ul class="list social-media">
+                            <!--TODO make links-->
                             <li class="list-item">
                                 <a href="#" class="list-link"><i class="ri-instagram-line"></i></a>
                             </li>

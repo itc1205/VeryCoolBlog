@@ -17,16 +17,22 @@ class News(SqlAlchemyBase):
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     
     short_description = sqlalchemy.Column(sqlalchemy.String)
-
+    ##############################
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, 
                                      default=dt.now)
-    
+
+    created_date_string = sqlalchemy.Column(sqlalchemy.String, default=lambda: dt.now().strftime("%d %b %Y"))
+    ##############################
     header_img = sqlalchemy.Column(sqlalchemy.String)
     
     preview_img = sqlalchemy.Column(sqlalchemy.String)
-    
+    ##############################
     views_count = sqlalchemy.Column(sqlalchemy.Integer, default = 0)
+    ##############################
+    reading_time_in_seconds = sqlalchemy.Column(sqlalchemy.Integer) # This parameter is for sorting by time
 
+    reading_time_in_minutes = sqlalchemy.Column(sqlalchemy.Integer) # This parameter is for showing in the post (so we dont need to calculate it once again)
+    ##############################
     user_id = sqlalchemy.Column(sqlalchemy.Integer, 
                                 sqlalchemy.ForeignKey("users.id"))
 
