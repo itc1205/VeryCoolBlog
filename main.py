@@ -26,9 +26,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 USER_IMAGE_PATH = 'static/assets/user_images'
 
+
 def main():
     db_session.global_init("db/mainDB.sqlite")
     app.run(host='0.0.0.0', port=80)
+
 
 def postCreated(post="New post has been created.\nGo and check it out"):
     db_sess = db_session.create_session()
@@ -37,6 +39,8 @@ def postCreated(post="New post has been created.\nGo and check it out"):
 
 ##############################################
 # Error handling
+
+
 @app.errorhandler(401)
 def handle_auth_error(e):
     error = {
@@ -45,6 +49,7 @@ def handle_auth_error(e):
     }
     return render_template('baseHtmlError.html', **error), 401
 
+
 @app.errorhandler(404)
 def handle_not_found(e):
     error = {
@@ -52,6 +57,7 @@ def handle_not_found(e):
         "message": "This is not the web page you are looking for",
     }
     return render_template('baseHtmlError.html', **error), 404
+
 
 @app.errorhandler(500)
 def genius_handle(e):
@@ -64,47 +70,50 @@ def genius_handle(e):
 ##############################################
 # Base routes
 
+
 @app.route('/', methods=["GET", "POST"])
 @app.route('/home', methods=["GET", "POST"])
 def index():
     db_sess = db_session.create_session()
     if request.method == "POST":
-        
+
         email = request.form["email"]
-        
+
         if db_sess.query(SubEmail).filter(SubEmail.email == email).first():
             return redirect('/')
         subEmail = SubEmail()
         subEmail.email = email
-            
+
         db_sess.add(subEmail)
         db_sess.commit()
-            
+
         sendEmail(email, text="Thanks for subscription")
         return redirect('/')
-    
+
     elif request.method == "GET":
         params = {
-            "breaking_post" : db_sess.query(News).order_by(desc(News.created_date)).first() ,
-            "latest_posts" : db_sess.query(News).order_by(desc(News.created_date)).limit(3),
-            "trending_news" : db_sess.query(News).order_by(News.views_count).limit(5),
-            "older_posts" : db_sess.query(News).order_by(News.created_date).filter(
+            "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first(),
+            "latest_posts": db_sess.query(News).order_by(desc(News.created_date)).limit(3),
+            "trending_news": db_sess.query(News).order_by(News.views_count).limit(5),
+            "older_posts": db_sess.query(News).order_by(News.created_date).filter(
                 News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
-                    News.id.notin_(db_sess.query(News.id).order_by(News.views_count).limit(5))
-                ).limit(6),
+                    News.id.notin_(db_sess.query(News.id).order_by(
+                        News.views_count).limit(5))
+            ).limit(6),
             "quick_read": db_sess.query(News).order_by(desc(News.reading_time_in_seconds)).limit(7)
         }
         return render_template('index.html', **params)
 
+
 @app.route('/post<int:id>')
 def post(id):
-    
+
     db_sess = db_session.create_session()
-    
+
     params = {
         "post": db_sess.query(News).filter(News.id == id).first(),
     }
-    
+
     params['post'].views_count += 1
     db_sess.merge(params['post'])
     db_sess.commit()
@@ -112,6 +121,7 @@ def post(id):
 
 ##############################################
 # Login handling
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -134,7 +144,8 @@ def login():
     }
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        user = db_sess.query(User).filter(
+            User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
@@ -152,10 +163,12 @@ def logout():
 ##############################################
 # Registration handling
 
+
 class RegistrationForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    repeat_password = PasswordField('Repeat password', validators=[DataRequired()])
+    repeat_password = PasswordField(
+        'Repeat password', validators=[DataRequired()])
     login = StringField('Login', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
     surname = StringField('Surname', validators=[DataRequired()])
@@ -174,11 +187,11 @@ def registration():
             return render_template('register.html', **params,
                                    message="Password does not match")
         db_sess = db_session.create_session()
-        
+
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', **params,
                                    message="User with this email is already exists")
-        
+
         if db_sess.query(User).filter(User.login == form.login.data).first():
             return render_template('register.html', **params,
                                    message="User with this login is already exists")
@@ -190,10 +203,10 @@ def registration():
         )
 
         user.set_password(form.password.data)
-        
+
         db_sess.add(user)
         db_sess.commit()
-        
+
         return render_template('register.html', **params,
                                regComplete=True)
     return render_template('register.html', **params)
@@ -202,25 +215,27 @@ def registration():
 ##########################################
 # Account handle
 
-@app.route('/account') 
+@app.route('/account')
 @login_required
-def account(): 
+def account():
     user = current_user
     print(user)
-    params = { 
+    params = {
         "name": user.name,
         "id": user.id,
         "login": user.login,
-    } 
-    return render_template('account.html', **params) 
+    }
+    return render_template('account.html', **params)
 
 #############################################
 # Posts creation
 
+
 class CreatePostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
-    short_description = TextAreaField('Short description', validators=[DataRequired()])
+    short_description = TextAreaField(
+        'Short description', validators=[DataRequired()])
     submit = SubmitField('Submit post')
 
 
@@ -230,7 +245,7 @@ def createPost():
 
     form = CreatePostForm()
     params = {
-        "form" : form,
+        "form": form,
     }
 
     if form.validate_on_submit():
@@ -239,13 +254,13 @@ def createPost():
         header_img_path = f'{USER_IMAGE_PATH}/header_images/header_image_{len(listdir(f"{USER_IMAGE_PATH}/header_images")) + 1}.png'
         with open(header_img_path, "wb") as file:
             file.write(header_img.read())
-        
+
         preview_img = request.files['preview_image']
         preview_img_path = f'{USER_IMAGE_PATH}/preview_images/preview_image_{len(listdir(f"{USER_IMAGE_PATH}/preview_images")) + 1}.png'
         with open(preview_img_path, "wb") as file:
             file.write(preview_img.read())
 
-        db_session.global_init("db/mainDB.sqlite") 
+        db_session.global_init("db/mainDB.sqlite")
         db_sess = db_session.create_session()
         news = News()
         news.header_img = header_img_path
@@ -253,22 +268,20 @@ def createPost():
         news.title = form.title.data
         news.content = form.content.data
         news.short_description = form.short_description.data
-        news.reading_time_in_seconds = round(len(form.content.data.split())/3,35)
-        news.reading_time_in_minutes = round(len(form.content.data.split())/201) # Reading time in seconds
+        news.reading_time_in_seconds = round(
+            len(form.content.data.split())/3, 35)
+        news.reading_time_in_minutes = round(
+            len(form.content.data.split())/201)
         current_user.news.append(news)
-        
+
         db_sess.merge(current_user)
         db_sess.commit()
-        
-       
 
         postCreated()
 
         return redirect('/')
-    
-     
-    
-    return render_template('createNewPost.html', **params) 
+
+    return render_template('createNewPost.html', **params)
 
 
 ##############################################
@@ -277,14 +290,26 @@ def createPost():
 def olderPosts():
     db_sess = db_session.create_session()
     params = {
-        "older_posts" : db_sess.query(News).order_by(News.created_date).filter(
-                News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
-                    News.id.notin_(db_sess.query(News.id).order_by(News.views_count).limit(5))
-                ).limit(6)
+        "older_posts": db_sess.query(News).order_by(News.created_date).filter(
+            News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
+            News.id.notin_(db_sess.query(News.id).order_by(
+                News.views_count).limit(5))
+        ).limit(6)
     }
-    return render_template('olderPostsView.html' **params)
+    return render_template('olderPostsView.html' ** params)
 
-@app.route('/search/<search_string>')
+#############################################
+# Search route
 
-if __name__ == "__main__": 
+
+@app.route('/search', methods=["GET"])
+def search():
+    db_sess = db_session.create_session()
+    params = {
+        "search_string": request.args.get('search-field')
+    }
+    return render_template('search.html', **params)
+
+
+if __name__ == "__main__":
     main()
