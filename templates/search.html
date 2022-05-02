@@ -1,3 +1,47 @@
 {% extends 'base.html' %} {% block content %}
-{{search_string}}
-{% block end %}
+<div class="section section-header-offset">
+    <div class="container d-grid">
+        
+        {% if search_result.first() %}
+        
+        results for {{search_string}}
+        
+        
+        <section class="older-posts section">
+
+            <div class="container">
+    
+                <div class="older-posts-grid-wrapper d-grid">
+                    {% for item in search_result %}
+                        <a href="post{{item.id}}" class="article d-grid">
+                            <div class="older-posts-article-image-wrapper">
+                                <img src={{item.preview_img}} alt="" class="article-image">
+                            </div>
+
+                            <div class="article-data-container">
+
+                                <div class="article-data">
+                                    <span>{{item.created_date_string}}</span>
+                                    <span class="article-data-spacer"></span>
+                                    <span>{{item.reading_time_in_minutes}} Min read</span>
+                                </div>
+
+                                <h3 class="title article-title">{{item.title}}</h3>
+                                <p class="article-description">{{item.short_description}}</p>
+
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        
+        {% else %}
+
+        There is no match!
+        
+        {% endif %}
+        
+    </div>
+</div>
+{% endblock %}

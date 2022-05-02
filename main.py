@@ -308,6 +308,9 @@ def search():
     params = {
         "search_string": request.args.get('search-field')
     }
+    params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
+        params['search_string']
+    ))
     return render_template('search.html', **params)
 
 
