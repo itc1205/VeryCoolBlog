@@ -44,7 +44,8 @@
                         <a href="#" class="list-link">Contact</a>
                     </li>
                     {% if current_user.is_authenticated %}
-                    <li><a class="list-item screen-lg-hidden" href="/logout">{{ current_user.name }}</a></li> 
+                    <li><a class="list-item screen-lg-hidden" href="create_new_post">New post</a></li>
+                    <li><a class="list-item screen-lg-hidden" href="logout">{{ current_user.name }}</a></li> 
                     {% else %}
                     <li class="list-item screen-lg-hidden">
                         <a href="login" class="list-link">Login</a>
@@ -71,13 +72,19 @@
                     <i class="ri-close-line close-menu-icon"></i>
                 </button>
                 {% if current_user.is_authenticated %}
-                    <a class="list-link screen-sm-hidden" href="/logout">{{ current_user.name }}</a>
+                    
+                <a class="list-link screen-sm-hidden" href="create_new_post">New post</a>        
+                <a class="list-link screen-sm-hidden" href="logout">{{ current_user.name }}</a>
+
                 {% else %}
-                    <a href="login" class="list-link screen-sm-hidden">Login</a>
-                    <a href="registration" class="btn sign-up-btn fancy-border screen-sm-hidden">
-                        <span>Register</span>
-                    </a>
+    
+                <a href="login" class="list-link screen-sm-hidden">Login</a>
+                <a href="registration" class="btn sign-up-btn fancy-border screen-sm-hidden">
+                    <span>Register</span>
+                </a>
+    
                 {% endif %}
+            
             </div>
 
         </nav>

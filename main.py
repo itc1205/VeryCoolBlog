@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, path
 
 from flask import Flask, render_template, redirect, request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 
 from sqlalchemy import desc
 
-from wtforms import PasswordField, StringField, IntegerField, EmailField, SubmitField, BooleanField, TextAreaField
+from wtforms import PasswordField, StringField, SelectField, EmailField, SubmitField, BooleanField, TextAreaField, FileField
 from wtforms.validators import DataRequired
 
 from mail import sendEmail
@@ -39,7 +39,6 @@ def postCreated(post="New post has been created.\nGo and check it out"):
 
 ##############################################
 # Error handling
-
 
 @app.errorhandler(401)
 def handle_auth_error(e):
@@ -75,6 +74,7 @@ def genius_handle(e):
 @app.route('/home', methods=["GET", "POST"])
 def index():
     db_sess = db_session.create_session()
+    
     if request.method == "POST":
 
         email = request.form["email"]
@@ -90,8 +90,17 @@ def index():
         sendEmail(email, text="Thanks for subscription")
         return redirect('/')
 
-    elif request.method == "GET":
+    if request.method == "GET":
         params = {
+            "tags":{
+                "travel": db_sess.query(News).filter(News.tag == "travel").order_by(News.views_count).first(),
+                "food": db_sess.query(News).filter(News.tag == "food").order_by(News.views_count).first(),
+                "technology": db_sess.query(News).filter(News.tag == "technology").order_by(News.views_count).first(),
+                "health": db_sess.query(News).filter(News.tag == "health").order_by(News.views_count).first(),
+                "nature": db_sess.query(News).filter(News.tag == "nature").order_by(News.views_count).first(),
+                "fitness": db_sess.query(News).filter(News.tag == "fitness").order_by(News.views_count).first(),
+            },
+            
             "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first(),
             "latest_posts": db_sess.query(News).order_by(desc(News.created_date)).limit(3),
             "trending_news": db_sess.query(News).order_by(News.views_count).limit(5),
@@ -102,10 +111,11 @@ def index():
             ).limit(6),
             "quick_read": db_sess.query(News).order_by(desc(News.reading_time_in_seconds)).limit(7)
         }
+
         return render_template('index.html', **params)
 
 
-@app.route('/post<int:id>')
+@app.route('/post/<int:id>')
 def post(id):
 
     db_sess = db_session.create_session()
@@ -215,11 +225,10 @@ def registration():
 ##########################################
 # Account handle
 
-@app.route('/account')
-@login_required
-def account():
-    user = current_user
-    print(user)
+@app.route('/account/<int:id>')
+def account(id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id).first()
     params = {
         "name": user.name,
         "id": user.id,
@@ -236,8 +245,24 @@ class CreatePostForm(FlaskForm):
     content = TextAreaField('Content', validators=[DataRequired()])
     short_description = TextAreaField(
         'Short description', validators=[DataRequired()])
+    tag = SelectField('Tags', choices=[
+                ('fitness', 'Fitness'),
+                ('travel', 'Travel'),
+                ('food','Food'),
+                ('nature','Nature'),
+                ('health','Health'),
+                ('technology','Technology'),
+            ]
+        )
+    preview_image = FileField('Preview image')
+    header_image = FileField('Header image')
     submit = SubmitField('Submit post')
 
+def upload(request):
+    form = CreatePostForm(request.POST)
+    if form.image.data:
+        image_data = request.FILES[form.image.name].read()
+        open(path.join(USER_IMAGE_PATH, form.image.data), 'w').write(image_data)
 
 @app.route('/create_new_post', methods=["GET", "POST"])
 @login_required
@@ -252,11 +277,13 @@ def createPost():
 
         header_img = request.files['header_image']
         header_img_path = f'{USER_IMAGE_PATH}/header_images/header_image_{len(listdir(f"{USER_IMAGE_PATH}/header_images")) + 1}.png'
+        
         with open(header_img_path, "wb") as file:
             file.write(header_img.read())
 
         preview_img = request.files['preview_image']
         preview_img_path = f'{USER_IMAGE_PATH}/preview_images/preview_image_{len(listdir(f"{USER_IMAGE_PATH}/preview_images")) + 1}.png'
+        
         with open(preview_img_path, "wb") as file:
             file.write(preview_img.read())
 
@@ -272,6 +299,7 @@ def createPost():
             len(form.content.data.split())/3, 35)
         news.reading_time_in_minutes = round(
             len(form.content.data.split())/201)
+        news.tag = form.tag.data
         current_user.news.append(news)
 
         db_sess.merge(current_user)
@@ -296,22 +324,38 @@ def olderPosts():
                 News.views_count).limit(5))
         ).limit(6)
     }
-    return render_template('olderPostsView.html' ** params)
+    return render_template('olderPostsView.html' **params)
 
 #############################################
 # Search route
 
 
-@app.route('/search', methods=["GET"])
+@app.route('/search')
 def search():
     db_sess = db_session.create_session()
     params = {
-        "search_string": request.args.get('search-field')
+        "search_string": request.args.get('search-field'),
+        "search_tags": request.args.get('tag')
     }
     params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
         params['search_string']
     ))
     return render_template('search.html', **params)
+
+
+#############################################
+# Contacts route
+@app.route('/contacts')
+def contacts():
+    params = {
+    }
+    return render_template('contacts.html', **params)
+
+#############################################
+# 
+@app.route('/dasdasd')
+def thing():
+    pass
 
 
 if __name__ == "__main__":

@@ -2,10 +2,10 @@
 {% extends 'base.html' %} {% block content %}
 <section class="login-form section-header-offset">
     <div class="login-form-container container">
-        <div class="login-form-data">
-            <form class="form-box" action="" method="post">
+        <div class="login-form-data form-container-inner">
+            <form class="form form-box" action="" method="post">
                 {{ form.hidden_tag() }}
-                <p>
+                <div class="form-input">
                     {{ form.email.label }}<br>
                     {{ form.email(class="form-input", type="email") }}<br>
                     {% for error in form.email.errors %}
@@ -13,8 +13,8 @@
                             {{ error }}
                         </div>
                     {% endfor %}
-                </p>
-                <p>
+                </div>
+                <div class="form-input">
                     {{ form.password.label }}<br>
                     {{ form.password(class="form-input", type="password") }}<br>
                     {% for error in form.password.errors %}
@@ -22,13 +22,17 @@
                             {{ error }}
                         </div>
                     {% endfor %}
-                </p>
-                <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-                <p class="btn sign-up-btn fancy-border">
-                    <span>{{ form.submit(type="submit") }}</span>
-                </p>
+                </div>
+                <div class="form-input">{{ form.remember_me(class="checkbox") }} {{ form.remember_me.label }}</div>
+                <div class="form-input">
+                    <div class="btn sign-up-btn fancy-border">
+                        <span>{{ form.submit(type="submit")}}</span>
+                    </div>
+                </div>
                 {% if message %}
-                <div class="error-message">{{ message }}</div>
+                <div class="form-input">
+                    <div class="error-message">{{ message }}</div>
+                </div>
                 {% endif %}
             </form>
         </div>

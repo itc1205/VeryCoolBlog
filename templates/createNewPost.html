@@ -1,49 +1,57 @@
 {% extends 'base.html' %} {% block content %}
 <section class="post-form section-header-offset">
     <div class="post-form-container container">
-        <div class="post-form-data">
-            <form class="form-box" method="post" enctype="multipart/form-data">
+        <div class="post-form-data form-container-inner">
+            <form class="form form-box" method="post" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <p>
+                <div class="form-input">
                     {{ form.title.label }}<br>
                     {{ form.title(class="form-input") }}<br>
                     {% for error in form.title.errors %}
-                        <p class="alert alert-danger" role="alert">
+                        <div class="alert alert-danger" role="alert">
                             {{ error }}
-                        </p>
+                        </div>
                     {% endfor %}
-                </p>
-                <p>
+                </div>
+                <div class="form-input">
                     {{ form.content.label }}<br>
                     {{ form.content(class="form-input") }}<br>
                     {% for error in form.content.errors %}
-                        <p content="alert alert-danger" role="alert">
+                        <div content="alert alert-danger" role="alert">
                             {{ error }}
-                        </p>
+                        </div>
                     {% endfor %}
-                </p>
-                <p>
+                </div>
+                <div class="form-input">
                     {{ form.short_description.label }}<br>
                     {{ form.short_description(class="form-input") }}<br>
                     {% for error in form.short_description.errors %}
-                        <p content="alert alert-danger" role="alert">
+                        <div content="alert alert-danger" role="alert">
                             {{ error }}
-                        </p>
+                        </div>
                     {% endfor %}
-                </p>
-                <p>
+                </div>
+                <div class="form-input">
+                    {{ form.tag.label }}<br>
+                    {{ form.tag(class="form-input") }}<br>
+                    {% for error in form.tag.errors %}
+                        <div content="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="form-input">
                     <label for="photo">Header image</label><br>
                     <input type="file" class="form-control-file" id="photo" name="header_image"><br>
-                </p>
-                <p>
+                </div>
+                <div class="form-input">
                     <label for="photo2">Preview image</label><br>
                     <input type="file" class="form-control-file" id="photo2" name="preview_image"><br>
-                </p>
+                </div>
                 {% if error %}
                     <div class="error-message">{{message}}</div>
-
                 {% endif %}
-                <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+                <div class="form-input">{{ form.submit(type="submit", class="btn btn-primary fancy-border") }}</div>
             </form>
         </div>
     </div>

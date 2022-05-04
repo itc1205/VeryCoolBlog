@@ -16,6 +16,8 @@ class News(SqlAlchemyBase):
     
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     
+    tag = sqlalchemy.Column(sqlalchemy.String, default=None)
+
     short_description = sqlalchemy.Column(sqlalchemy.String)
     ##############################
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, 

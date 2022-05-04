@@ -227,11 +227,14 @@ body.light-theme{
 
 .form-input,
 .form-btn{
-    display: inline-block;
     outline: none;
     border: 2px solid var(--secondary-background-color);
     padding: 1.5rem;
     color: var(--light-color-alt);
+}
+
+.search-form-container > .form-btn {
+    display: inline-block;
 }
 
 .search-form-container > .form-input{

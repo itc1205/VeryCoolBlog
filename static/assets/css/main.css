@@ -196,6 +196,10 @@ body.light-theme{
     display: block;
 }
 
+.checkbox{
+    accent-color: var(--secondary-background-color);
+}
+
 /* Search */
 .search-form-container{
     width: 100%;
@@ -765,7 +769,6 @@ body.light-theme{
 .login-form-data .btn{
     width: auto;
     margin: auto;
-    margin-bottom: .5rem;
 }
 
 /* messages */
@@ -788,6 +791,7 @@ body.light-theme{
 
 .form-box{
     border-style: solid;
+    flex-direction: column;
 }
 
 /* Account page */
@@ -814,7 +818,6 @@ body.light-theme{
 .account-page-data .btn{
     width: auto;
     margin: auto;
-    margin-bottom: .5rem;
 }
 
 /* Error handling */

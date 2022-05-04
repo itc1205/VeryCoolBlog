@@ -4,8 +4,7 @@
         
         {% if search_result.first() %}
         
-        results for {{search_string}}
-        
+        results for {{search_string}}    
         
         <section class="older-posts section">
 
@@ -13,7 +12,7 @@
     
                 <div class="older-posts-grid-wrapper d-grid">
                     {% for item in search_result %}
-                        <a href="post{{item.id}}" class="article d-grid">
+                        <a href="post/{{item.id}}" class="article d-grid">
                             <div class="older-posts-article-image-wrapper">
                                 <img src={{item.preview_img}} alt="" class="article-image">
                             </div>
