@@ -3,7 +3,7 @@
     <div class="register-form-container container">
         <div class="register-form-data form-container-inner">
             {% if not regComplete %}
-            <form class="form form-box" action="" method="post">
+            <form class="form form-box" method="post" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <div class="form-input">
                     {{ form.email.label }}<br>
@@ -58,6 +58,10 @@
                             {{ error }}
                         </div>
                     {% endfor %}
+                </div>
+                <div class="form-input">
+                    <label for="photo">Profile image</label><br>
+                    <input type="file" class="form-control-file" id="photo" name="profile_image"><br>
                 </div>
                 <div class="form-input">
                     <div class="btn sign-up-btn fancy-border">

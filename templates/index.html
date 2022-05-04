@@ -9,13 +9,14 @@
                     <h3 class="headline fancy-border">
                         <span class="place-items-center">Breaking news</span>
                     </h3>
-                    <span class="headline-description">{{breaking_post.content}}</span>
+                    <!--TODO: Fix headline-desc-->
+                    <span class="headline-description">None</span>
                 </div>
                 
                 {% for item in latest_posts %}
                 <a href="post/{{item.id}}" class="article featured-article featured-article-{{loop.index}}">
                     <img src="{{item.preview_img}}" alt="" class="article-image">
-                    <span class="article-category">Technology</span>
+                    <span class="article-category">{{item.tag}}</span>
 
                     <div class="article-data-container">
 

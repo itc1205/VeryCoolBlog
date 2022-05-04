@@ -23,6 +23,8 @@ class User(SqlAlchemyBase, UserMixin):
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=dt.now)
     news = orm.relation("News", back_populates='user')
 
+    profile_image = sqlalchemy.Column(sqlalchemy.String)
+
     def __repr__(self):
         return f'---\nUser with id - {self.id}\n--- {self.name} {self.surname}\n---'
 

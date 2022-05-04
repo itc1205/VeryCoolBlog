@@ -33,7 +33,7 @@ class News(SqlAlchemyBase):
     ##############################
     reading_time_in_seconds = sqlalchemy.Column(sqlalchemy.Integer) # This parameter is for sorting by time
 
-    reading_time_in_minutes = sqlalchemy.Column(sqlalchemy.Integer) # This parameter is for showing in the post (so we dont need to calculate it once again)
+    reading_time_in_minutes = sqlalchemy.Column(sqlalchemy.Integer) # This parameter is for showing in the post (so we dont need to calculate it each time)
     ##############################
     user_id = sqlalchemy.Column(sqlalchemy.Integer, 
                                 sqlalchemy.ForeignKey("users.id"))

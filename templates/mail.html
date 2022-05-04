@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+            gap: 0.5rem;
+            width: 75%;
+            text-align: center;
+        }
+        a {
+            color: antiquewhite;
+        }
+        img {
+            display: block;
+        }
+        .content-container{
+            display: flex;
+            flex-direction: column;
+            background-color: antiquewhite;
+            padding: 0.5rem;
+            gap: 0.5rem;
+        }
+        .description-container,
+        .header-image-container,
+        .company-name-container,
+        .title-container{
+            padding: 0.5rem;
+            background-color: black;
+            color: antiquewhite;
+            margin: auto;
+        }
+        .company-name-container{
+            font-size: large;
+            font-weight: bolder;
+        }
+        .title-container{
+            font-size: medium;
+            font-weight: 600;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <a href="{{SERVER_LINK}}/post/{{id}}">View in Browser</a>
+    </div>
+    <div class="content-container">
+        <div class="company-name-container">
+            ONI13
+        </div>
+        <div class="title-container">
+            {{news.title}}
+        </div>
+        <div class="header-image-container">
+            <img src="{{news.preview_img}}" alt="something" class="header-image">
+        </div>
+        <div class="description-container">
+            <div class="description">
+                {{news.content}}
+            </div>
+        </div>
+    </div>
+    <div>
+        <a href="{{UNSUB_LINK}}/?email={{EMAIL}}">Unsubscribe</a>
+    </div>
+</body>
+</html>

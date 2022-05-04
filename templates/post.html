@@ -9,7 +9,7 @@
                     <span class="article-data-spacer"></span>
                     <span>{{post.reading_time_in_minutes}} Mins read</span>
                 </div>
-                <img src="{{post.header_img}}" alt="">
+                <img src="/{{post.header_img}}" alt="">
             </div>
 
             <div class="container">
@@ -17,7 +17,7 @@
                 <div class="author d-grid">
                     <div class="author-image-box">
                         <!--TODO make a user pfp-->
-                        <img src="" alt="" class="article-image">
+                        <img src="/{{post.user.profile_image}}" alt="" class="article-image">
                     </div>
                     <div class="author-about">
                         <h3 class="author-name">{{post.user.name}} {{post.user.surname}}</h3>

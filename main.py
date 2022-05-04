@@ -1,22 +1,20 @@
-from os import listdir, path
+from os import listdir
 
-from flask import Flask, render_template, redirect, request
+from flask import Flask, abort, render_template, redirect, request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import FlaskForm
 
 from sqlalchemy import desc
 
-from wtforms import PasswordField, StringField, SelectField, EmailField, SubmitField, BooleanField, TextAreaField, FileField
+from wtforms import PasswordField, StringField, SelectField, EmailField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired
 
-from mail import sendEmail
+import mail
 
 from data import db_session
 from data.users import User
 from data.news import News
 from data.subbedemails import SubEmail
-
-from datetime import datetime as dt
 
 ##############################################
 # App init
@@ -25,17 +23,17 @@ app.config['SECRET_KEY'] = 'nice'
 login_manager = LoginManager()
 login_manager.init_app(app)
 USER_IMAGE_PATH = 'static/assets/user_images'
-
+DEFAULT_PROFILE_PICTURE = 'static/assets/default_images/profile_images/profile_image.jpg'
 
 def main():
     db_session.global_init("db/mainDB.sqlite")
     app.run(host='0.0.0.0', port=80)
 
 
-def postCreated(post="New post has been created.\nGo and check it out"):
+def postCreated(news):
     db_sess = db_session.create_session()
     for email in db_sess.query(SubEmail):
-        sendEmail(email.email, post)
+        mail.sendEmail(email.email, render_template("mail.html", **{"email":email, "news":news}))
 
 ##############################################
 # Error handling
@@ -87,7 +85,7 @@ def index():
         db_sess.add(subEmail)
         db_sess.commit()
 
-        sendEmail(email, text="Thanks for subscription")
+        mail.sendEmail(email, "Thanks for subscription")
         return redirect('/')
 
     if request.method == "GET":
@@ -128,6 +126,14 @@ def post(id):
     db_sess.merge(params['post'])
     db_sess.commit()
     return render_template('post.html', **params)
+
+
+@app.route('/unsub')
+def unsubscribe_mail():
+    db_sess = db_session.create_session()
+    email = db_sess.query(SubEmail).filter(SubEmail.email == request.args.get('email')).first()
+    db_sess.delete(email)
+    return 'Unsubbed!'
 
 ##############################################
 # Login handling
@@ -182,6 +188,7 @@ class RegistrationForm(FlaskForm):
     login = StringField('Login', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
     surname = StringField('Surname', validators=[DataRequired()])
+    # Profile picture
     submit = SubmitField('Complete registration')
 
 
@@ -205,12 +212,26 @@ def registration():
         if db_sess.query(User).filter(User.login == form.login.data).first():
             return render_template('register.html', **params,
                                    message="User with this login is already exists")
+        
         user = User(
             email=form.email.data,
             login=form.login.data,
             surname=form.surname.data,
             name=form.name.data,
         )
+
+        profile_image = request.files['profile_image']
+
+        if profile_image:
+            profile_image_path = f'{USER_IMAGE_PATH}/profile_images/profile_image_{len(listdir(f"{USER_IMAGE_PATH}/profile_images")) + 1}.png'
+        
+            with open(profile_image_path, "wb") as file:
+                file.write(profile_image.read())
+        else:
+            profile_image_path = DEFAULT_PROFILE_PICTURE
+
+
+        user.profile_image = profile_image_path
 
         user.set_password(form.password.data)
 
@@ -254,15 +275,8 @@ class CreatePostForm(FlaskForm):
                 ('technology','Technology'),
             ]
         )
-    preview_image = FileField('Preview image')
-    header_image = FileField('Header image')
     submit = SubmitField('Submit post')
 
-def upload(request):
-    form = CreatePostForm(request.POST)
-    if form.image.data:
-        image_data = request.FILES[form.image.name].read()
-        open(path.join(USER_IMAGE_PATH, form.image.data), 'w').write(image_data)
 
 @app.route('/create_new_post', methods=["GET", "POST"])
 @login_required
@@ -305,7 +319,9 @@ def createPost():
         db_sess.merge(current_user)
         db_sess.commit()
 
-        postCreated()
+        news = db_sess.query(News).filter(News == news).first()
+
+        postCreated(news)
 
         return redirect('/')
 
@@ -360,3 +376,4 @@ def thing():
 
 if __name__ == "__main__":
     main()
+    mail.stopMailServer()

@@ -1,31 +1,29 @@
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import email.message
 import smtplib
 
-PASSWORD = "unknown"
+PASSWORD = "2kfduNa7KcEAVMs"
 EMAIL = "m21899339@gmail.com"
+UNSUB_LINK = ""
+SERVER_LINK = ""
+server = smtplib.SMTP('smtp.gmail.com: 587')
 
-def sendEmail(email, text="Example text"):
+server.starttls()
 
-    message = text
+server.login(EMAIL, PASSWORD)
 
-    msg = MIMEMultipart()
+def sendEmail(mail, html="Example text"):
+
+    msg = email.message.Message()
     msg["From"] = EMAIL
-    msg["To"] = email
+    msg["To"] = mail
     msg["Subject"] = "Subscription"
 
-    msg.attach(MIMEText(message, 'plain'))
-
-
-    server = smtplib.SMTP('smtp.gmail.com: 587')
-
-    server.starttls()
-
-    server.login(msg["From"], PASSWORD)
-
+    msg.add_header('Content-Type', 'text/html')
+    msg.set_payload(html)
 
     server.sendmail(msg["From"], msg["To"], msg.as_string())
 
+def stopMailServer():
     server.quit()
 
 if __name__ == "__main__":
