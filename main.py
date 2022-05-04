@@ -32,8 +32,12 @@ def main():
 
 def postCreated(news):
     db_sess = db_session.create_session()
+    params = {
+        'news': news,
+    }
     for email in db_sess.query(SubEmail):
-        mail.sendEmail(email.email, render_template("mail.html", **{"email":email, "news":news}))
+        params['mail'] = email.email
+        mail.sendEmail(email.email, render_template("mail.html", **params))
 
 ##############################################
 # Error handling
@@ -303,6 +307,7 @@ def createPost():
 
         db_session.global_init("db/mainDB.sqlite")
         db_sess = db_session.create_session()
+        
         news = News()
         news.header_img = header_img_path
         news.preview_img = preview_img_path
@@ -319,7 +324,7 @@ def createPost():
         db_sess.merge(current_user)
         db_sess.commit()
 
-        news = db_sess.query(News).filter(News == news).first()
+        news = db_sess.query(News).filter(News.header_img == news.header_img).first()
 
         postCreated(news)
 

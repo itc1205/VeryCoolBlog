@@ -7,9 +7,9 @@ UNSUB_LINK = ""
 SERVER_LINK = ""
 server = smtplib.SMTP('smtp.gmail.com: 587')
 
-server.starttls()
-
-server.login(EMAIL, PASSWORD)
+def startMailServer():
+    server.starttls()
+    server.login(EMAIL, PASSWORD)
 
 def sendEmail(mail, html="Example text"):
 
@@ -27,4 +27,6 @@ def stopMailServer():
     server.quit()
 
 if __name__ == "__main__":
+    
     sendEmail()
+    stopMailServer()
