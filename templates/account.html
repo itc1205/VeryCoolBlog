@@ -32,9 +32,11 @@
                                 <span>{{item.created_date_string}}</span>
                                 <span class="article-data-spacer"></span>
                                 <span>{{item.reading_time_in_minutes}} Min read</span>
+                                {% if current_user.id == user.id %}
                                 <span class="article-data-spacer"></span>
                                 <span><a href="/edit?post_id={{item.id}}">Edit</a></span>
                                 <span><a href="/delete?post_id={{item.id}}">Delete</a></span>
+                                {% endif %}
                             </div>
                             
                             <a href="/post/{{item.id}}" class="title article-title">{{item.title}}</a>

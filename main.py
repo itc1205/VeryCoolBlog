@@ -373,10 +373,17 @@ def contacts():
 
 #############################################
 # 
-@app.route('/dasdasd')
-def thing():
-    pass
-
+@app.route('/delete')
+def delete():
+    db_sess = db_session.create_session()
+    post_id = request.args.get('post_id')
+    post = db_sess.query(News).filter(News.id == post_id).first()
+    if not current_user.id == post.user.id:
+        abort(404)
+    else:
+        db_sess.delete(post)
+        db_sess.commit()
+        return "Successfully deleted~!"
 
 if __name__ == "__main__":
     main()

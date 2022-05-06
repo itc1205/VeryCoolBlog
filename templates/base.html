@@ -48,10 +48,10 @@
                     <li><a class="list-item screen-lg-hidden" href="/account/{{current_user.id}}">{{ current_user.name }}</a></li> 
                     {% else %}
                     <li class="list-item screen-lg-hidden">
-                        <a href="login" class="list-link">Login</a>
+                        <a href="/login" class="list-link">Login</a>
                     </li>
                     <li class="list-item screen-lg-hidden">
-                        <a href="register" class="list-link">Register</a>
+                        <a href="/register" class="list-link">Register</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -78,7 +78,7 @@
 
                 {% else %}
     
-                <a href="l/ogin" class="list-link screen-sm-hidden">Login</a>
+                <a href="/login" class="list-link screen-sm-hidden">Login</a>
                 <a href="/registration" class="btn sign-up-btn fancy-border screen-sm-hidden">
                     <span>Register</span>
                 </a>
