@@ -1,86 +1,94 @@
-
 <!DOCTYPE html>
 
 <html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="x-apple-disable-message-reformatting">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title></title>
 
     <style type="text/css">
+      a,
+      a:link,
+      a:visited {
+        color: #faebd7;
+        text-decoration: none;
+      }
+      a:hover,
+      a:active {
+        color: #ffffff;
+      }
 
-        a,a:link,a:visited{color:#faebd7;text-decoration:none;}
-        a:hover,a:active{color:#ffffff;}
+      img {
+        display: block;
+      }
 
-        img {display: block;}
+      .content-container {
+        display: block;
+        background-color: #faebd7;
+        padding: 0.5rem;
+      }
 
-        .content-container{
-            display:block;
-            background-color:#faebd7;
-            padding:0.5rem;}
+      .description-container,
+      .header-image-container,
+      .company-name-container,
+      .title-container {
+        padding: 0.5em;
+        background-color: black;
+        color: antiquewhite;
+        margin: auto;
+        margin-top: 0.5rem;
+        width: min-content;
+      }
 
-        .description-container,
-        .header-image-container,
-        .company-name-container,
-        .title-container{padding:0.5em;background-color: black;color: antiquewhite;margin:auto;margin-top:.5rem;width:min-content;}
+      .company-name-container {
+        font-size: large;
+        font-weight: bolder;
+      }
 
-        .company-name-container{
-            font-size: large;
-            font-weight: bolder;
-        }
-
-         .title-container{
-            font-size: medium;
-            font-weight: 600;
-        }
-
+      .title-container {
+        font-size: medium;
+        font-weight: 600;
+      }
     </style>
+  </head>
 
-</head>
-
-<body style="
-display:block;
-font-family: 'Courier New', Courier, monospace;
-background-color: black;
-margin: auto;
-gap: 0.5rem;
-width: 75%; 
-text-align: center;">
-
+  <body
+    style="
+      display: block;
+      font-family: 'Courier New', Courier, monospace;
+      background-color: black;
+      margin: auto;
+      gap: 0.5rem;
+      width: 75%;
+      text-align: center;
+    "
+  >
     <div>
-        <a href="{{SERVER_LINK}}/post/{{news.id}}">View in Browser</a>
+      <a href="{{SERVER_LINK}}/post/{{news.id}}">View in Browser</a>
     </div>
 
     <div class="content-container">
-     
-        <div class="company-name-container">
-            ONI13
-        </div>
+      <div class="company-name-container">ONI13</div>
 
-        <div class="title-container">
-            {{news.title}}
-        </div>
+      <div class="title-container">{{news.title}}</div>
 
-        <div class="header-image-container">
-            <img src="{{SERVER_LINK}}{{news.preview_img}}" alt="image" class="header-image">
-        </div>
+      <div class="header-image-container">
+        <img
+          src="{{SERVER_LINK}}{{news.preview_img}}"
+          alt="image"
+          class="header-image"
+        />
+      </div>
 
-        <div class="description-container">
-            <div class="description">
-                {{news.content}}
-            </div>
-        </div>
-
+      <div class="description-container">
+        <div class="description">{{news.content}}</div>
+      </div>
     </div>
 
     <div>
-        <a href="{{SERVER_LINK}}/unsub/?email={{mail}}">Unsubscribe</a>
+      <a href="{{SERVER_LINK}}/unsub/?email={{mail}}">Unsubscribe</a>
     </div>
-
-</body>
-
+  </body>
 </html>

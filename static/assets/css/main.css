@@ -800,24 +800,34 @@ body.light-theme{
 }
 
 .account-page .container{
-    max-width: 90rem;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: var(--gap);
+    max-width: 75%;
 }
 
 .account-page-data{
     display: flex;
     flex-direction: column;
-    align-items: center;
     text-align: center;
     padding-block: 2.5rem;
+    gap: var(--gap);
 }
 
-.account-page-data .btn{
+.user-info{
+    background-color: var(--secondary-background-color);
     width: auto;
-    margin: auto;
+}
+
+.user-posts-container{
+    display: flex;
+    flex-direction: column;
+    border: solid var(--secondary-background-color);
+    overflow: hidden;
+    overflow-y: scroll;
+    max-height: 45rem;
+    gap: var(--gap);
 }
 
 /* Error handling */
@@ -914,6 +924,19 @@ body.light-theme{
 }
 
 @media screen and (min-width: 1024px) {
+    
+    .account-page-data{
+        flex-direction: row;
+    }
+
+    .user-info{
+        width: 25%;
+    }
+    
+    .user-posts-container{
+        width: 75%;
+    }
+
     .menu{
         position: static;
         width: initial;

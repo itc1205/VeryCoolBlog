@@ -1,16 +1,51 @@
 {% extends 'base.html' %} {% block content %}
-<section class="account-page section-header-offset">
-    <div class="account-page-container container">
-        <div class="account-page-data">
-            <p>
-                User name : {{current_user.name}}
-            </p>
-            <p>
-                User id : {{current_user.id}}
-            </p>
-            <div class="btn sign-up-btn fancy-border">Logout</div>
+    <section class="account-page section section-header-offset">
+        <div class="account-page container">
+            <div class="account-page-data">
+                <div class="user-info">
+                    <div class="user-image-container">
+                        <img src="/{{user.profile_image}}" alt="profile picture">
+                    </div>
+                    <div class="user-info-container">
+                        <div class="user-name-surname">
+                            {{user.name}} {{user.surname}}
+                        </div>
+                        <div class="user-description">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="user-posts-container">
+                    {% for item in posts %}
+                        
+                    <div class="trending-news-box">
+                        <div class="trending-news-img-box">
+                            <img src="/{{item.preview_img}}" alt="" class="article-image">
+                        </div>
+    
+                        <div class="trending-news-data">
+    
+                            <div class="article-data">
+                                <span>{{item.views_count}} views</span>
+                                <span class="article-data-spacer"></span>
+                                <span>{{item.created_date_string}}</span>
+                                <span class="article-data-spacer"></span>
+                                <span>{{item.reading_time_in_minutes}} Min read</span>
+                                <span class="article-data-spacer"></span>
+                                <span><a href="/edit?post_id={{item.id}}">Edit</a></span>
+                                <span><a href="/delete?post_id={{item.id}}">Delete</a></span>
+                            </div>
+                            
+                            <a href="/post/{{item.id}}" class="title article-title">{{item.title}}</a>
+                            
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+            </div>
+            
         </div>
-        
-    </div>
-</section>
+    </section>
 {% endblock %}

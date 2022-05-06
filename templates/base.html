@@ -44,8 +44,8 @@
                         <a href="#" class="list-link">Contact</a>
                     </li>
                     {% if current_user.is_authenticated %}
-                    <li><a class="list-item screen-lg-hidden" href="create_new_post">New post</a></li>
-                    <li><a class="list-item screen-lg-hidden" href="logout">{{ current_user.name }}</a></li> 
+                    <li><a class="list-item screen-lg-hidden" href="/create_new_post">New post</a></li>
+                    <li><a class="list-item screen-lg-hidden" href="/account/{{current_user.id}}">{{ current_user.name }}</a></li> 
                     {% else %}
                     <li class="list-item screen-lg-hidden">
                         <a href="login" class="list-link">Login</a>
@@ -73,13 +73,13 @@
                 </button>
                 {% if current_user.is_authenticated %}
                     
-                <a class="list-link screen-sm-hidden" href="create_new_post">New post</a>        
-                <a class="list-link screen-sm-hidden" href="logout">{{ current_user.name }}</a>
+                <a class="list-link screen-sm-hidden" href="/create_new_post">New post</a>        
+                <a class="list-link screen-sm-hidden" href="/account/{{current_user.id}}">{{ current_user.name }}</a></li> 
 
                 {% else %}
     
-                <a href="login" class="list-link screen-sm-hidden">Login</a>
-                <a href="registration" class="btn sign-up-btn fancy-border screen-sm-hidden">
+                <a href="l/ogin" class="list-link screen-sm-hidden">Login</a>
+                <a href="/registration" class="btn sign-up-btn fancy-border screen-sm-hidden">
                     <span>Register</span>
                 </a>
     
@@ -96,7 +96,7 @@
 
         <div class="form-container-inner">
 
-            <form action="search" class="form">
+            <form action="/search" class="form">
                 <input class="form-input" type="text" placeholder="What are you looking for?" name="search-field">
                 <button class="btn form-btn" type="submit">
                     <i class="ri-search-line"></i>

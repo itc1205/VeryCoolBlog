@@ -1,6 +1,6 @@
 from os import listdir
 
-from flask import Flask, abort, render_template, redirect, request
+from flask import Flask, abort, render_template, redirect, request, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_wtf import FlaskForm
 
@@ -27,7 +27,9 @@ DEFAULT_PROFILE_PICTURE = 'static/assets/default_images/profile_images/profile_i
 
 def main():
     db_session.global_init("db/mainDB.sqlite")
+    mail.startMailServer()
     app.run(host='0.0.0.0', port=80)
+    mail.stopMailServer()
 
 
 def postCreated(news):
@@ -192,7 +194,6 @@ class RegistrationForm(FlaskForm):
     login = StringField('Login', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
     surname = StringField('Surname', validators=[DataRequired()])
-    # Profile picture
     submit = SubmitField('Complete registration')
 
 
@@ -254,16 +255,15 @@ def registration():
 def account(id):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id).first()
+    posts = user.news
     params = {
-        "name": user.name,
-        "id": user.id,
-        "login": user.login,
+        "user": user,
+        "posts": posts
     }
     return render_template('account.html', **params)
 
 #############################################
 # Posts creation
-
 
 class CreatePostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
@@ -345,11 +345,10 @@ def olderPosts():
                 News.views_count).limit(5))
         ).limit(6)
     }
-    return render_template('olderPostsView.html' **params)
+    return render_template('olderPostsView.html', **params)
 
 #############################################
 # Search route
-
 
 @app.route('/search')
 def search():
@@ -381,4 +380,3 @@ def thing():
 
 if __name__ == "__main__":
     main()
-    mail.stopMailServer()
