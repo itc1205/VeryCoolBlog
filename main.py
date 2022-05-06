@@ -25,6 +25,7 @@ login_manager.init_app(app)
 USER_IMAGE_PATH = 'static/assets/user_images'
 DEFAULT_PROFILE_PICTURE = 'static/assets/default_images/profile_images/profile_image.jpg'
 
+
 def main():
     db_session.global_init("db/mainDB.sqlite")
     mail.startMailServer()
@@ -43,6 +44,7 @@ def postCreated(news):
 
 ##############################################
 # Error handling
+
 
 @app.errorhandler(401)
 def handle_auth_error(e):
@@ -78,7 +80,7 @@ def genius_handle(e):
 @app.route('/home', methods=["GET", "POST"])
 def index():
     db_sess = db_session.create_session()
-    
+
     if request.method == "POST":
 
         email = request.form["email"]
@@ -96,7 +98,7 @@ def index():
 
     if request.method == "GET":
         params = {
-            "tags":{
+            "tags": {
                 "travel": db_sess.query(News).filter(News.tag == "travel").order_by(News.views_count).first(),
                 "food": db_sess.query(News).filter(News.tag == "food").order_by(News.views_count).first(),
                 "technology": db_sess.query(News).filter(News.tag == "technology").order_by(News.views_count).first(),
@@ -104,7 +106,7 @@ def index():
                 "nature": db_sess.query(News).filter(News.tag == "nature").order_by(News.views_count).first(),
                 "fitness": db_sess.query(News).filter(News.tag == "fitness").order_by(News.views_count).first(),
             },
-            
+
             "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first(),
             "latest_posts": db_sess.query(News).order_by(desc(News.created_date)).limit(3),
             "trending_news": db_sess.query(News).order_by(News.views_count).limit(5),
@@ -137,7 +139,8 @@ def post(id):
 @app.route('/unsub')
 def unsubscribe_mail():
     db_sess = db_session.create_session()
-    email = db_sess.query(SubEmail).filter(SubEmail.email == request.args.get('email')).first()
+    email = db_sess.query(SubEmail).filter(
+        SubEmail.email == request.args.get('email')).first()
     db_sess.delete(email)
     return 'Unsubbed!'
 
@@ -217,7 +220,7 @@ def registration():
         if db_sess.query(User).filter(User.login == form.login.data).first():
             return render_template('register.html', **params,
                                    message="User with this login is already exists")
-        
+
         user = User(
             email=form.email.data,
             login=form.login.data,
@@ -229,12 +232,11 @@ def registration():
 
         if profile_image:
             profile_image_path = f'{USER_IMAGE_PATH}/profile_images/profile_image_{len(listdir(f"{USER_IMAGE_PATH}/profile_images")) + 1}.png'
-        
+
             with open(profile_image_path, "wb") as file:
                 file.write(profile_image.read())
         else:
             profile_image_path = DEFAULT_PROFILE_PICTURE
-
 
         user.profile_image = profile_image_path
 
@@ -265,20 +267,21 @@ def account(id):
 #############################################
 # Posts creation
 
+
 class CreatePostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
     short_description = TextAreaField(
         'Short description', validators=[DataRequired()])
     tag = SelectField('Tags', choices=[
-                ('fitness', 'Fitness'),
-                ('travel', 'Travel'),
-                ('food','Food'),
-                ('nature','Nature'),
-                ('health','Health'),
-                ('technology','Technology'),
-            ]
-        )
+        ('fitness', 'Fitness'),
+        ('travel', 'Travel'),
+        ('food', 'Food'),
+        ('nature', 'Nature'),
+        ('health', 'Health'),
+        ('technology', 'Technology'),
+    ]
+    )
     submit = SubmitField('Submit post')
 
 
@@ -295,19 +298,18 @@ def createPost():
 
         header_img = request.files['header_image']
         header_img_path = f'{USER_IMAGE_PATH}/header_images/header_image_{len(listdir(f"{USER_IMAGE_PATH}/header_images")) + 1}.png'
-        
+
         with open(header_img_path, "wb") as file:
             file.write(header_img.read())
 
         preview_img = request.files['preview_image']
         preview_img_path = f'{USER_IMAGE_PATH}/preview_images/preview_image_{len(listdir(f"{USER_IMAGE_PATH}/preview_images")) + 1}.png'
-        
+
         with open(preview_img_path, "wb") as file:
             file.write(preview_img.read())
 
-        db_session.global_init("db/mainDB.sqlite")
         db_sess = db_session.create_session()
-        
+
         news = News()
         news.header_img = header_img_path
         news.preview_img = preview_img_path
@@ -324,7 +326,8 @@ def createPost():
         db_sess.merge(current_user)
         db_sess.commit()
 
-        news = db_sess.query(News).filter(News.header_img == news.header_img).first()
+        news = db_sess.query(News).filter(
+            News.header_img == news.header_img).first()
 
         postCreated(news)
 
@@ -350,6 +353,7 @@ def olderPosts():
 #############################################
 # Search route
 
+
 @app.route('/search')
 def search():
     db_sess = db_session.create_session()
@@ -372,7 +376,9 @@ def contacts():
     return render_template('contacts.html', **params)
 
 #############################################
-# 
+#
+
+
 @app.route('/delete')
 def delete():
     db_sess = db_session.create_session()
@@ -384,6 +390,7 @@ def delete():
         db_sess.delete(post)
         db_sess.commit()
         return "Successfully deleted~!"
+
 
 if __name__ == "__main__":
     main()

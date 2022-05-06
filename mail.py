@@ -6,27 +6,32 @@ EMAIL = "m21899339@gmail.com"
 UNSUB_LINK = ""
 SERVER_LINK = ""
 server = smtplib.SMTP('smtp.gmail.com: 587')
+failure_counter = 0
 
 def startMailServer():
     server.starttls()
     server.login(EMAIL, PASSWORD)
 
 def sendEmail(mail, html="Example text"):
+    try:
+        msg = email.message.EmailMessage()
+        msg["From"] = EMAIL
+        msg["To"] = mail
+        msg["Subject"] = "Subscription"
 
-    msg = email.message.Message()
-    msg["From"] = EMAIL
-    msg["To"] = mail
-    msg["Subject"] = "Subscription"
+        msg.add_header('Content-Type', 'text/html')
+        msg.set_payload(html, "utf-8")
 
-    msg.add_header('Content-Type', 'text/html')
-    msg.set_payload(html)
+        server.sendmail(msg["From"], msg["To"], msg.as_string().encode())
+    
+    except smtplib.SMTPServerDisconnected:
+        startMailServer()
+        server.sendmail(msg["From"], msg["To"], msg.as_string().encode())
 
-    server.sendmail(msg["From"], msg["To"], msg.as_string())
 
 def stopMailServer():
     server.quit()
 
 if __name__ == "__main__":
-    
     sendEmail()
     stopMailServer()

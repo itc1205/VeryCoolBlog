@@ -39,7 +39,6 @@
         color: antiquewhite;
         margin: auto;
         margin-top: 0.5rem;
-        width: min-content;
       }
 
       .company-name-container {
@@ -60,7 +59,6 @@
       font-family: 'Courier New', Courier, monospace;
       background-color: black;
       margin: auto;
-      gap: 0.5rem;
       width: 75%;
       text-align: center;
     "
@@ -74,7 +72,7 @@
 
       <div class="title-container">{{news.title}}</div>
 
-      <div class="header-image-container">
+      <div class="header-image-container" style="width: auto">
         <img
           src="{{SERVER_LINK}}{{news.preview_img}}"
           alt="image"
@@ -82,8 +80,8 @@
         />
       </div>
 
-      <div class="description-container">
-        <div class="description">{{news.content}}</div>
+      <div class="description-container" style="width: auto">
+        <div class="description" style="width: auto">{{news.content}}</div>
       </div>
     </div>
 
