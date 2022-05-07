@@ -21,6 +21,8 @@ class User(SqlAlchemyBase, UserMixin):
     login = sqlalchemy.Column(sqlalchemy.String, unique=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=dt.now)
+    description = sqlalchemy.Column(sqlalchemy.String)
+    
     news = orm.relation("News", back_populates='user')
 
     profile_image = sqlalchemy.Column(sqlalchemy.String)

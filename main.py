@@ -197,6 +197,7 @@ class RegistrationForm(FlaskForm):
     login = StringField('Login', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
     surname = StringField('Surname', validators=[DataRequired()])
+    user_description = TextAreaField('Short description', validators=[DataRequired()])
     submit = SubmitField('Complete registration')
 
 
@@ -226,6 +227,7 @@ def registration():
             login=form.login.data,
             surname=form.surname.data,
             name=form.name.data,
+            description=form.user_description.data,
         )
 
         profile_image = request.files['profile_image']
@@ -257,11 +259,15 @@ def registration():
 def account(id):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id).first()
-    posts = user.news
+    
+    if user:
+        posts = user.news
+    
     params = {
         "user": user,
         "posts": posts
     }
+    
     return render_template('account.html', **params)
 
 #############################################
@@ -362,7 +368,7 @@ def search():
         "search_tags": request.args.get('tag')
     }
     params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
-        params['search_string']
+        f"%{params['search_string']}%"
     ))
     return render_template('search.html', **params)
 
@@ -376,15 +382,46 @@ def contacts():
     return render_template('contacts.html', **params)
 
 #############################################
-#
+# Edit/Delete posts
 
+@login_required
+@app.route('/edit', methods=['GET', 'POST'])
+def edit():
+    form = CreatePostForm()
+    db_sess = db_session.create_session()
+    post_id = request.args.get('post_id')
+    post = db_sess.query(News).filter(News.id == post_id).first()
+    
+    if (not current_user.id == post.user.id) or (not post):
+        abort(404)
+    
+    else:
+        if request.method == "GET":
 
+            form.title.data = post.title
+            form.content.data = post.content
+            form.short_description.data = post.short_description
+            form.tag.data = post.tag
+        
+            return render_template("createNewPost.html", form=form)
+
+        if form.validate_on_submit:
+            
+            post.title = form.title.data
+            post.content = form.content.data
+            post.short_description = form.short_description.data
+            post.tag = form.tag.data
+            db_sess.commit()
+            
+            return redirect('/')
+
+@login_required
 @app.route('/delete')
 def delete():
     db_sess = db_session.create_session()
     post_id = request.args.get('post_id')
     post = db_sess.query(News).filter(News.id == post_id).first()
-    if not current_user.id == post.user.id:
+    if (not current_user.id == post.user.id) or (not post):
         abort(404)
     else:
         db_sess.delete(post)

@@ -60,6 +60,15 @@
                     {% endfor %}
                 </div>
                 <div class="form-input">
+                    {{ form.user_description.label }}<br>
+                    {{ form.user_description(class="form-input") }}<br>
+                    {% for error in form.user_description.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="form-input">
                     <label for="photo">Profile image</label><br>
                     <input type="file" class="form-control-file" id="photo" name="profile_image"><br>
                 </div>

@@ -16,12 +16,11 @@
                 {{post.content}}
                 <div class="author d-grid">
                     <div class="author-image-box">
-                        <!--TODO make a user pfp-->
                         <img src="/{{post.user.profile_image}}" alt="" class="article-image">
                     </div>
                     <div class="author-about">
                         <h3 class="author-name">{{post.user.name}} {{post.user.surname}}</h3>
-                        <p><!--TODO make an user description--></p>
+                        <p>{{post.user.description}}</p>
                         <ul class="list social-media">
                             <!--TODO make links-->
                             <li class="list-item">
