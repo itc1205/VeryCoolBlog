@@ -26,8 +26,6 @@ USER_IMAGE_PATH = 'static/assets/user_images'
 DEFAULT_PROFILE_PICTURE_PATH = 'static/assets/default_images/profile_images/default_pfp.png'
 DEFAULT_HEADER_PICTURE_PATH = 'static/assets/default_images/header_images/default.jpg'
 DEFAULT_PREVIEW_PICTURE_PATH = 'static/assets/default_images/preview_images/default_preview.jpg'
-db_session.global_init("db/mainDB.sqlite")
-mail.startMailServer()
 
 with open(DEFAULT_PROFILE_PICTURE_PATH, "rb") as file:
         DEF_PROFILE_PIC = file.read()
@@ -39,7 +37,10 @@ with open(DEFAULT_PREVIEW_PICTURE_PATH, "rb") as file:
         DEF_PREVIEW_PIC = file.read()       
 
 def main():
+    db_session.global_init("db/mainDB.sqlite")
+    mail.startMailServer()
     app.run(host='0.0.0.0', port=80)
+    mail.stopMailServer()
 
 
 def postCreated(news):
@@ -106,7 +107,7 @@ def index():
             mail.sendEmail(email, "Thanks for subscription")
         else:
             abort(404)
-        flash("Mail has been subscribed!")
+        flash("Mail has been subscribe")
         return redirect('/')
 
     if request.method == "GET":
@@ -536,8 +537,6 @@ def edit_profile():
             db_sess.commit()
             flash('Account has been redacted!')
             return redirect('/')
-
-mail.stopMailServer()
 
 if __name__ == "__main__":
     main()
