@@ -23,11 +23,18 @@ app.config['SECRET_KEY'] = 'nice'
 login_manager = LoginManager()
 login_manager.init_app(app)
 USER_IMAGE_PATH = 'static/assets/user_images'
-DEFAULT_PROFILE_PICTURE_PATH = 'static/assets/default_images/profile_images/profile_image.jpg'
+DEFAULT_PROFILE_PICTURE_PATH = 'static/assets/default_images/profile_images/default_pfp.png'
+DEFAULT_HEADER_PICTURE_PATH = 'static/assets/default_images/header_images/default.jpg'
+DEFAULT_PREVIEW_PICTURE_PATH = 'static/assets/default_images/preview_images/default_preview.jpg'
 
 with open(DEFAULT_PROFILE_PICTURE_PATH, "rb") as file:
         DEF_PROFILE_PIC = file.read()
 
+with open(DEFAULT_HEADER_PICTURE_PATH, "rb") as file:
+        DEF_HEADER_PIC = file.read()
+
+with open(DEFAULT_PREVIEW_PICTURE_PATH, "rb") as file:
+        DEF_PREVIEW_PIC = file.read()       
 
 def main():
     db_session.global_init("db/mainDB.sqlite")
@@ -100,7 +107,7 @@ def index():
             mail.sendEmail(email, "Thanks for subscription")
         else:
             abort(404)
-
+        flash("Mail has been subscribed!")
         return redirect('/')
 
     if request.method == "GET":
@@ -149,7 +156,8 @@ def unsubscribe_mail():
     email = db_sess.query(SubEmail).filter(
         SubEmail.email == request.args.get('email')).first()
     db_sess.delete(email)
-    return 'Unsubbed!'
+    flash('Mail has been unsubscribed!')
+    return redirect('/')
 
 ##############################################
 # Login handling
@@ -181,7 +189,7 @@ def login():
     
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            
+            flash("User has been sucessfully logged in!")
             return redirect("/")
     
         return render_template('login.html',
@@ -194,7 +202,10 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect('/home')
+    
+    flash('User has been sucessfully logged out!')
+
+    return redirect('/')
 
 ##############################################
 # Registration handling
@@ -260,8 +271,9 @@ def registration():
         db_sess.add(user)
         db_sess.commit()
 
-        return render_template('register.html', **params,
-                               regComplete=True)
+        flash('Account has been created!')
+
+        return redirect('/')
     return render_template('register.html', **params)
 
 
@@ -317,15 +329,23 @@ def createPost():
 
         header_img = request.files['header_image']
         header_img_path = f'{USER_IMAGE_PATH}/header_images/header_image_{len(listdir(f"{USER_IMAGE_PATH}/header_images")) + 1}.png'
-
-        with open(header_img_path, "wb") as file:
-            file.write(header_img.read())
+        if header_img:
+            with open(header_img_path, "wb") as file:
+                file.write(header_img.read())
+        
+        else:
+            with open(header_img_path, "wb") as file:
+                file.write(DEF_HEADER_PIC)
 
         preview_img = request.files['preview_image']
         preview_img_path = f'{USER_IMAGE_PATH}/preview_images/preview_image_{len(listdir(f"{USER_IMAGE_PATH}/preview_images")) + 1}.png'
-
-        with open(preview_img_path, "wb") as file:
-            file.write(preview_img.read())
+        if preview_img:
+            with open(preview_img_path, "wb") as file:
+                file.write(preview_img.read())
+        
+        else:
+            with open(preview_img_path, "wb") as file:
+                file.write(DEF_PREVIEW_PIC)
 
         db_sess = db_session.create_session()
 
@@ -349,6 +369,7 @@ def createPost():
             News.header_img == news.header_img).first()
 
         postCreated(news)
+        flash('Post has been created!')
 
         return redirect('/')
 
@@ -360,6 +381,7 @@ def createPost():
 @app.route('/older_posts')
 def olderPosts():
     db_sess = db_session.create_session()
+
     params = {
         "older_posts": db_sess.query(News).order_by(News.created_date).filter(
             News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
@@ -378,28 +400,14 @@ def search():
     db_sess = db_session.create_session()
     
     params = {
-        "search_string": request.args.get('search-field'),
-        "search_tags": request.args.get('tag')
+        "search_string": request.args.get('search-field')
     }
     
-    if params["search_string"]:
-        params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
+    params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
         f"%{params['search_string']}%"
     ))
-    
-    elif params["search_tags"]:
-        params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.tag == params['search_tags'])
-
     return render_template('search.html', **params)
 
-
-#############################################
-# Contacts route
-@app.route('/contacts')
-def contacts():
-    params = {
-    }
-    return render_template('contacts.html', **params)
 
 #############################################
 # Edit/Delete posts
@@ -426,13 +434,35 @@ def edit_post():
             return render_template("createNewPost.html", form=form)
 
         if form.validate_on_submit:
+            header_img = request.files['header_image']
+            header_img_path = post.header_img
+            if header_img:
+                with open(header_img_path, "wb") as file:
+                    file.write(header_img.read())
             
+
+            preview_img = request.files['preview_image']
+            preview_img_path = post.preview_img
+            if preview_img:
+                with open(preview_img_path, "wb") as file:
+                    file.write(preview_img.read())
+
+            
+            post.header_img = header_img_path
+            post.preview_img = preview_img_path
             post.title = form.title.data
             post.content = form.content.data
             post.short_description = form.short_description.data
+            post.reading_time_in_seconds = round(
+                len(form.content.data.split())/3, 35)
+            post.reading_time_in_minutes = round(
+                len(form.content.data.split())/201)
             post.tag = form.tag.data
+
             db_sess.commit()
             
+            db_sess.commit()
+            flash('Post has been edited!')
             return redirect('/')
 
 
@@ -450,7 +480,7 @@ def delete_post():
     else:
         db_sess.delete(post)
         db_sess.commit()
-        flash('Sucessfully deleted')
+        flash('Post has been deleted!')
         return redirect('/')
 
 
@@ -505,7 +535,7 @@ def edit_profile():
 
             user.set_password(form.password.data)
             db_sess.commit()
-            
+            flash('Account has been redacted!')
             return redirect('/')
 
 if __name__ == "__main__":

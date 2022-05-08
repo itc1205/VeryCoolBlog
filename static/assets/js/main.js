@@ -43,10 +43,12 @@ window.addEventListener("keyup", event => {
 const bodyElement = document.body;
 const themeToggleBtn = selectElement("#theme-toggle-btn");
 const currentTheme = localStorage.getItem("currentTheme");
+const elementToHide = document.getElementById("hide");
+if (elementToHide) {
+  setTimeout(() => {elementToHide.classList.add('hidden')}, 1000);
+  setTimeout(() => {elementToHide.classList.add('fully-hidden')}, 2000);
+}
 
-//checking for theme in local storage
-//TODO make it works from backend not frontend
-//Or maybe make it stay here so yes good luck malding and reading tht code
 
 if (currentTheme) {
   bodyElement.classList.toggle("light-theme");
@@ -80,3 +82,4 @@ const swiper = new Swiper('.swiper', {
     }
   }
 });
+

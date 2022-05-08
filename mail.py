@@ -24,7 +24,7 @@ def sendEmail(mail, html="Example text"):
 
         server.sendmail(msg["From"], msg["To"], msg.as_string().encode())
     
-    except smtplib.SMTPServerDisconnected:
+    except:
         startMailServer()
         server.sendmail(msg["From"], msg["To"], msg.as_string().encode())
 

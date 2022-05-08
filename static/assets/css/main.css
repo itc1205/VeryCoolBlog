@@ -773,17 +773,17 @@ body.light-theme{
 /* messages */
 
 .error-message{
-    padding-block: 1.5rem;
+    padding-block: 0.5rem;
     background-color: var(--secondary-background-color);
-    box-shadow: solid rgb(247, 88, 26);
+    border-bottom: solid rgb(247, 88, 26);
     font-size: var(--font-size-md);
     text-align: center;
 }
 
 .success-message{
-    padding-block: 1.5rem;
+    padding-block: 0.5rem;
     background-color: var(--secondary-background-color);
-    box-shadow: solid rgb(115, 255, 0);
+    border-bottom: solid rgb(115, 255, 0);
     font-size: var(--font-size-md);
     text-align: center;
 }
@@ -884,6 +884,25 @@ body.light-theme{
 .error-number{
     font-size: var(--font-size-xl);
     text-align: center;
+}
+
+.flashes{
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    background-color: var(--secondary-background-color);
+    border: solid greenyellow;
+    
+}
+
+.hidden{
+    transition: all 1s;
+    opacity: 0;
+}
+
+.fully-hidden{
+    display: none;
 }
 
 @media screen and (min-width: 700px) {

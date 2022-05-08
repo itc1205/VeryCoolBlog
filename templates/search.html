@@ -1,11 +1,10 @@
 {% extends 'base.html' %} {% block content %}
 <div class="section section-header-offset">
     <div class="container d-grid">
-        
         {% if search_result.first() %}
         
-        results for {{search_string}}    
-        
+        <h2 class="title section-title" data-name="{{search_string}}">Search</h2>
+
         <section class="older-posts section">
 
             <div class="container">
@@ -36,8 +35,8 @@
         </section>
         
         {% else %}
-
-        There is no match!
+        <h2 class="title section-title" data-name="There is no match!">Search</h2>
+        
         
         {% endif %}
         

@@ -105,24 +105,9 @@
                 <a href="./index.html">
                     <h2 class="logo">oni13</h2>
                 </a>
-                <p class="company-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere, iure. Harum, animi dolores, nam, ad magni expedita.</p>
+                <p class="company-description">Dynamic enviroment</p>
 
-                <ul class="list social-media">
-                    <li class="list-item">
-                        <a href="#" class="list-link"><i class="ri-instagram-line"></i></a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link"><i class="ri-facebook-circle-line"></i></a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link"><i class="ri-twitter-line"></i></a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link"><i class="ri-pinterest-line"></i></a>
-                    </li>
-                </ul>
-
-                <span class="copyright-notice">&copy;2021 oni13. All rights reserved.</span>
+                <span class="copyright-notice">&copy;2022 oni13. None of rights reserved.</span>
             </div>
 
             <div>
@@ -151,56 +136,20 @@
 
             </div>
 
-            <div>
-                <h6 class="title footer-title">Useful links</h6>
-
-                <ul class="footer-list list">
-                    <li class="list-item">
-                        <a href="#" class="list-link">Home</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Elements</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Tags</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Authors</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Membership</a>
-                    </li>
-                </ul>
-
-            </div>
-
-            <div>
-                <h6 class="title footer-title">Company</h6>
-
-                <ul class="footer-list list">
-                    <li class="list-item">
-                        <a href="#" class="list-link">Contact us</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">F.A.Q</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Careers</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Authors</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Memberships</a>
-                    </li>
-                </ul>
-
-            </div>
 
         </div>
 
     </footer>
-
+    <!--Flushed messages-->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes id="hide">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
     <!-- Swiper.js -->
     <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
     <!-- Custom script -->
