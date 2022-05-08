@@ -89,6 +89,7 @@ def genius_handle(e):
 @app.route('/', methods=["GET", "POST"])
 @app.route('/home', methods=["GET", "POST"])
 def index():
+    db_session.global_init("db/mainDB.sqlite")
     db_sess = db_session.create_session()
 
     if request.method == "POST":
@@ -107,7 +108,7 @@ def index():
             mail.sendEmail(email, "Thanks for subscription")
         else:
             abort(404)
-        flash("Mail has been subscribe")
+        flash("Mail has been subscriber")
         return redirect('/')
 
     if request.method == "GET":
@@ -137,7 +138,7 @@ def index():
 
 @app.route('/post/<int:id>')
 def post(id):
-
+    db_session.global_init("db/mainDB.sqlite")
     db_sess = db_session.create_session()
 
     params = {
@@ -165,6 +166,7 @@ def unsubscribe_mail():
 
 @login_manager.user_loader
 def load_user(user_id):
+    db_session.global_init("db/mainDB.sqlite")
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
 
@@ -178,6 +180,7 @@ class LoginForm(FlaskForm):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    db_session.global_init("db/mainDB.sqlite")
     form = LoginForm()
     params = {
         'form': form,
@@ -225,6 +228,7 @@ class RegistrationForm(FlaskForm):
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
+    db_session.global_init("db/mainDB.sqlite")
     form = RegistrationForm()
     params = {
         'form': form
@@ -282,6 +286,7 @@ def registration():
 
 @app.route('/account/<int:id>')
 def account(id):
+    db_session.global_init("db/mainDB.sqlite")
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id).first()
     
@@ -319,7 +324,7 @@ class CreatePostForm(FlaskForm):
 @app.route('/create_new_post', methods=["GET", "POST"])
 @login_required
 def createPost():
-
+    db_session.global_init("db/mainDB.sqlite")
     form = CreatePostForm()
     params = {
         "form": form,
@@ -380,6 +385,7 @@ def createPost():
 # Older posts route
 @app.route('/older_posts')
 def olderPosts():
+    db_session.global_init("db/mainDB.sqlite")
     db_sess = db_session.create_session()
 
     params = {
@@ -397,6 +403,7 @@ def olderPosts():
 
 @app.route('/search')
 def search():
+    db_session.global_init("db/mainDB.sqlite")
     db_sess = db_session.create_session()
     
     params = {
@@ -415,6 +422,7 @@ def search():
 @login_required
 @app.route('/edit_post', methods=['GET', 'POST'])
 def edit_post():
+    db_session.global_init("db/mainDB.sqlite")
     form = CreatePostForm()
     db_sess = db_session.create_session()
     post_id = request.args.get('post_id')
@@ -470,6 +478,7 @@ def edit_post():
 @login_required
 @app.route('/delete_post')
 def delete_post():
+    db_session.global_init("db/mainDB.sqlite")
     db_sess = db_session.create_session()
     post_id = request.args.get('post_id')
     post = db_sess.query(News).filter(News.id == post_id).first()
@@ -487,6 +496,7 @@ def delete_post():
 @login_required
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
+    db_session.global_init("db/mainDB.sqlite")
     form = RegistrationForm()
     db_sess = db_session.create_session()
     user_id = request.args.get('user_id')
