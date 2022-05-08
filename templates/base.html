@@ -25,24 +25,6 @@
 
             <div class="menu" id="menu">
                 <ul class="list">
-                    <li class="list-item">
-                        <a href="#" class="list-link">Home</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Categories</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Reviews</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">News</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Membership</a>
-                    </li>
-                    <li class="list-item">
-                        <a href="#" class="list-link">Contact</a>
-                    </li>
                     {% if current_user.is_authenticated %}
                     <li><a class="list-item screen-lg-hidden" href="/create_new_post">New post</a></li>
                     <li><a class="list-item screen-lg-hidden" href="/account/{{current_user.id}}">{{ current_user.name }}</a></li> 

@@ -747,7 +747,6 @@ body.light-theme{
 .post-form .container,
 .register-form .container,
 .login-form .container{
-    max-width: 90rem;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -774,18 +773,19 @@ body.light-theme{
 /* messages */
 
 .error-message{
-    padding-block: .5rem;
+    padding-block: 1.5rem;
     background-color: var(--secondary-background-color);
-    box-shadow: 4px 4px rgb(247, 88, 26);
+    box-shadow: solid rgb(247, 88, 26);
+    font-size: var(--font-size-md);
+    text-align: center;
 }
 
 .success-message{
-    padding-block: .5rem;
+    padding-block: 1.5rem;
     background-color: var(--secondary-background-color);
-    box-shadow: 4px 4px rgb(115, 255, 0);
+    box-shadow: solid rgb(115, 255, 0);
     font-size: var(--font-size-md);
     text-align: center;
-    padding: 0.5rem;
 }
 
 
@@ -816,6 +816,9 @@ body.light-theme{
 }
 
 .user-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background-color: var(--secondary-background-color);
     width: auto;
 }
@@ -830,6 +833,44 @@ body.light-theme{
     gap: var(--gap);
 }
 
+.user-image-container{
+    display: flex;
+    border-bottom: solid var(--primary-background-color);
+}
+
+.buttons-placeholder{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.user-info-container{
+    display:flex;
+    flex-direction: column;
+    justify-content: space-around;
+    
+}
+
+.buttons-placeholder{
+    border-top: solid var(--primary-background-color);
+    padding: 0.5rem;
+}
+
+.buttons-placeholder > .btn{
+    width: 40%;
+}
+
+.user-name-surname{
+    font-size: large;
+}
+
+.user-description{
+    font-size: small;
+}
+
+.button-spacer{
+    border-left: solid var(--primary-background-color);
+}
 /* Error handling */
 .error{
     margin-bottom: 5rem;

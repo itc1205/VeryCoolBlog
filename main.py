@@ -23,7 +23,10 @@ app.config['SECRET_KEY'] = 'nice'
 login_manager = LoginManager()
 login_manager.init_app(app)
 USER_IMAGE_PATH = 'static/assets/user_images'
-DEFAULT_PROFILE_PICTURE = 'static/assets/default_images/profile_images/profile_image.jpg'
+DEFAULT_PROFILE_PICTURE_PATH = 'static/assets/default_images/profile_images/profile_image.jpg'
+
+with open(DEFAULT_PROFILE_PICTURE_PATH, "rb") as file:
+        DEF_PROFILE_PIC = file.read()
 
 
 def main():
@@ -84,16 +87,20 @@ def index():
     if request.method == "POST":
 
         email = request.form["email"]
+        
+        if email:
+            if db_sess.query(SubEmail).filter(SubEmail.email == email).first():
+                return redirect('/')
+            subEmail = SubEmail()
+            subEmail.email = email
 
-        if db_sess.query(SubEmail).filter(SubEmail.email == email).first():
-            return redirect('/')
-        subEmail = SubEmail()
-        subEmail.email = email
+            db_sess.add(subEmail)
+            db_sess.commit()
 
-        db_sess.add(subEmail)
-        db_sess.commit()
+            mail.sendEmail(email, "Thanks for subscription")
+        else:
+            abort(404)
 
-        mail.sendEmail(email, "Thanks for subscription")
         return redirect('/')
 
     if request.method == "GET":
@@ -155,7 +162,7 @@ def load_user(user_id):
 
 
 class LoginForm(FlaskForm):
-    email = EmailField('Email', validators=[DataRequired()])
+    login = EmailField('Login', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Log in')
@@ -167,16 +174,20 @@ def login():
     params = {
         'form': form,
     }
+    
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(
-            User.email == form.email.data).first()
+        user = db_sess.query(User).filter(User.login == form.login.data).first()
+    
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
+            
             return redirect("/")
+    
         return render_template('login.html',
                                message="Wrong login or password",
                                **params)
+    
     return render_template('login.html', **params)
 
 
@@ -232,13 +243,15 @@ def registration():
 
         profile_image = request.files['profile_image']
 
+        profile_image_path = f'{USER_IMAGE_PATH}/profile_images/profile_image_{len(listdir(f"{USER_IMAGE_PATH}/profile_images")) + 1}.png'
+        
         if profile_image:
-            profile_image_path = f'{USER_IMAGE_PATH}/profile_images/profile_image_{len(listdir(f"{USER_IMAGE_PATH}/profile_images")) + 1}.png'
-
             with open(profile_image_path, "wb") as file:
                 file.write(profile_image.read())
+        
         else:
-            profile_image_path = DEFAULT_PROFILE_PICTURE
+            with open(profile_image_path, "wb") as file:
+                file.write(DEF_PROFILE_PIC.read())
 
         user.profile_image = profile_image_path
 
@@ -363,13 +376,20 @@ def olderPosts():
 @app.route('/search')
 def search():
     db_sess = db_session.create_session()
+    
     params = {
         "search_string": request.args.get('search-field'),
         "search_tags": request.args.get('tag')
     }
-    params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
+    
+    if params["search_string"]:
+        params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
         f"%{params['search_string']}%"
     ))
+    
+    elif params["search_tags"]:
+        params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.tag == params['search_tags'])
+
     return render_template('search.html', **params)
 
 
@@ -385,8 +405,8 @@ def contacts():
 # Edit/Delete posts
 
 @login_required
-@app.route('/edit', methods=['GET', 'POST'])
-def edit():
+@app.route('/edit_post', methods=['GET', 'POST'])
+def edit_post():
     form = CreatePostForm()
     db_sess = db_session.create_session()
     post_id = request.args.get('post_id')
@@ -415,19 +435,78 @@ def edit():
             
             return redirect('/')
 
+
+
 @login_required
-@app.route('/delete')
-def delete():
+@app.route('/delete_post')
+def delete_post():
     db_sess = db_session.create_session()
     post_id = request.args.get('post_id')
     post = db_sess.query(News).filter(News.id == post_id).first()
+    
     if (not current_user.id == post.user.id) or (not post):
         abort(404)
+   
     else:
         db_sess.delete(post)
         db_sess.commit()
-        return "Successfully deleted~!"
+        flash('Sucessfully deleted')
+        return redirect('/')
 
+
+@login_required
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    form = RegistrationForm()
+    db_sess = db_session.create_session()
+    user_id = request.args.get('user_id')
+    user = db_sess.query(User).filter(User.id == user_id).first()
+    if (not current_user.id == user.id) or (not user):
+        abort(404)
+
+    else:
+        form.name.data = user.name
+        form.surname.data = user.surname
+        form.user_description.data = user.description
+        form.email.data = user.email
+        form.login.data = user.login
+        
+        if request.method == "GET":
+            return render_template("register.html", form=form)
+
+        if form.validate_on_submit:
+            
+            if form.password.data != form.repeat_password.data:
+                return render_template('register.html', form=form,
+                                    message="Password does not match")
+            db_sess = db_session.create_session()
+
+            if db_sess.query(User).filter(User.email == form.email.data).filter(User.id != user.id).first():
+                return render_template('register.html', form=form,
+                                    message="User with this email is already exists")
+
+            if db_sess.query(User).filter(User.login == form.login.data).filter(User.id != user.id).first():
+                return render_template('register.html', form=form,
+                                    message="User with this login is already exists")
+
+            user.email=form.email.data
+            user.login=form.login.data
+            user.surname=form.surname.data
+            user.name=form.name.data
+            user.description=form.user_description.data
+
+            profile_image = request.files['profile_image']
+
+            if profile_image:
+                profile_image_path = user.profile_image
+
+                with open(profile_image_path, "wb") as file:
+                    file.write(profile_image.read())
+
+            user.set_password(form.password.data)
+            db_sess.commit()
+            
+            return redirect('/')
 
 if __name__ == "__main__":
     main()

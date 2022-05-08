@@ -13,7 +13,17 @@
                         <div class="user-description">
                             {{user.description}}
                         </div>
+                        
                     </div>
+                    {% if current_user.id == user.id %}
+                    <div class="buttons-placeholder">
+                        <a href="/logout" class="btn">Logout</a>
+                        <span class="button-spacer"></span>
+                        <a href="/edit_profile?user_id={{user.id}}" class="btn">Edit profile</a>
+                    </div>
+                        
+                        
+                    {% endif %}
                 </div>
                 
                 <div class="user-posts-container">
@@ -34,8 +44,8 @@
                                 <span>{{item.reading_time_in_minutes}} Min read</span>
                                 {% if current_user.id == user.id %}
                                 <span class="article-data-spacer"></span>
-                                <span><a href="/edit?post_id={{item.id}}">Edit</a></span>
-                                <span><a href="/delete?post_id={{item.id}}">Delete</a></span>
+                                <span><a href="/edit_post?post_id={{item.id}}">Edit</a></span>
+                                <span><a href="/delete_post?post_id={{item.id}}">Delete</a></span>
                                 {% endif %}
                             </div>
                             
