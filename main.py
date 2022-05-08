@@ -266,7 +266,7 @@ def registration():
         
         else:
             with open(profile_image_path, "wb") as file:
-                file.write(DEF_PROFILE_PIC.read())
+                file.write(DEF_PROFILE_PIC)
 
         user.profile_image = profile_image_path
 
