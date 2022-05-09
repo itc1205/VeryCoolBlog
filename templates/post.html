@@ -15,24 +15,12 @@
             <div class="container">
                 {{post.content}}
                 <div class="author d-grid">
-                    <div class="author-image-box">
+                    <a href="/account/{{post.user.id}}" class="author-image-box">
                         <img src="/{{post.user.profile_image}}" alt="" class="article-image">
-                    </div>
+                    </a>
                     <div class="author-about">
                         <h3 class="author-name">{{post.user.name}} {{post.user.surname}}</h3>
                         <p>{{post.user.description}}</p>
-                        <ul class="list social-media">
-                            <!--TODO make links-->
-                            <li class="list-item">
-                                <a href="#" class="list-link"><i class="ri-instagram-line"></i></a>
-                            </li>
-                            <li class="list-item">
-                                <a href="#" class="list-link"><i class="ri-facebook-circle-line"></i></a>
-                            </li>
-                            <li class="list-item">
-                                <a href="#" class="list-link"><i class="ri-twitter-line"></i></a>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
