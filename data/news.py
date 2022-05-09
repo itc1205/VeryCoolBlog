@@ -38,7 +38,7 @@ class News(SqlAlchemyBase):
     user_id = sqlalchemy.Column(sqlalchemy.Integer, 
                                 sqlalchemy.ForeignKey("users.id"))
 
-    user = orm.relationship('User', lazy="dynamic")
+    user = orm.relation('User')
 
     def __repr__(self):
         print(f' - {self.user.name} {self.user.surname} - created a post with id {self.id} at  {self.created_date}')
