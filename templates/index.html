@@ -10,7 +10,7 @@
                         <span class="place-items-center">Breaking news</span>
                     </h3>
                     <!--TODO: Fix headline-desc-->
-                    <span class="headline-description">None</span>
+                    <span class="headline-description">{{breaking_post}}</span>
                 </div>
                 
                 {% for item in latest_posts %}
@@ -146,7 +146,7 @@
 
             <div class="popular-tags-container d-grid">
                 {% for key in tags.keys() %}
-                    <a href="#" class="article">
+                    <a href="/tag?tag_name={{key}}" class="article">
                         <span class="tag-name">{{key.capitalize()}}</span>
                         <img src="{{tags[key].preview_img}}" alt="" class="article-image">
                     </a>

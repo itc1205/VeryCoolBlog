@@ -1,16 +1,15 @@
 {% extends 'base.html' %} {% block content %}
 <div class="section section-header-offset">
     <div class="container d-grid">
-        {% if search_result.first() %}
+        {% if tag_posts.first() %}
+        <h2 class="title section-title" data-name="tag">{{tag.capitalize()}}</h2>
         
-        <h2 class="title section-title" data-name="{{search_string}}">Search</h2>
-
         <section class="older-posts section">
 
             <div class="container">
     
                 <div class="older-posts-grid-wrapper d-grid">
-                    {% for item in search_result %}
+                    {% for item in tag_posts %}
                         <a href="post/{{item.id}}" class="article d-grid">
                             <div class="older-posts-article-image-wrapper">
                                 <img src={{item.preview_img}} alt="" class="article-image">
@@ -33,13 +32,11 @@
                 </div>
             </div>
         </section>
-        
         {% else %}
-        <h2 class="title section-title" data-name="Nothing to match!">Search</h2>
+        <h2 class="title section-title" data-name="Nothing to match!">{{tag.capitalize()}}</h2>
         
         
         {% endif %}
-        
     </div>
 </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block content %}
 <div class="section section-header-offset">
     <div class="container d-grid">
-        
+        {% if older_posts.first() %}
         <h2 class="title section-title" data-name="Older posts">Older posts</h2>
         
         <section class="older-posts section">
@@ -32,4 +32,10 @@
                 </div>
             </div>
         </section>
+        {% else %}
+        <h2 class="title section-title" data-name="There is no older posts!">Older posts</h2>
+        
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -45,12 +45,16 @@ def main():
 
 def postCreated(news):
     db_sess = db_session.create_session()
+    mail.startMailServer()
     params = {
         'news': news,
     }
-    for email in db_sess.query(SubEmail):
-        params['mail'] = email.email
-        mail.sendEmail(email.email, render_template("mail.html", **params))
+    try:
+        for email in db_sess.query(SubEmail):
+            params['mail'] = email.email
+            mail.sendEmail(email.email, render_template("mail.html", **params))
+    except:
+        flash("There is a problem with an email")
 
 ##############################################
 # Error handling
@@ -105,10 +109,10 @@ def index():
             db_sess.add(subEmail)
             db_sess.commit()
 
-            mail.sendEmail(email, "Thanks for subscription")
+            mail.sendEmail(email, "Thanks for subscription!")
         else:
             abort(404)
-        flash("Mail has been subscriber")
+        flash("Mail has been subscribed!")
         return redirect('/')
 
     if request.method == "GET":
@@ -122,7 +126,7 @@ def index():
                 "fitness": db_sess.query(News).filter(News.tag == "fitness").order_by(News.views_count).first(),
             },
 
-            "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first(),
+            "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first().title,
             "latest_posts": db_sess.query(News).order_by(desc(News.created_date)).limit(3),
             "trending_news": db_sess.query(News).order_by(News.views_count).limit(5),
             "older_posts": db_sess.query(News).order_by(News.created_date).filter(
@@ -156,8 +160,11 @@ def unsubscribe_mail():
     db_sess = db_session.create_session()
     email = db_sess.query(SubEmail).filter(
         SubEmail.email == request.args.get('email')).first()
-    db_sess.delete(email)
-    flash('Mail has been unsubscribed!')
+    if not email:
+        flash('Error: there is no email like this')
+    else:
+        db_sess.delete(email)
+        flash('Mail has been unsubscribed!')
     return redirect('/')
 
 ##############################################
@@ -201,7 +208,7 @@ def login():
     
     return render_template('login.html', **params)
 
-
+@login_required
 @app.route('/logout')
 def logout():
     logout_user()
@@ -292,6 +299,8 @@ def account(id):
     
     if user:
         posts = user.news
+    else:
+        posts = None
     
     params = {
         "user": user,
@@ -547,6 +556,19 @@ def edit_profile():
             db_sess.commit()
             flash('Account has been redacted!')
             return redirect('/')
+
+######################################
+# View by tag
+
+@app.route('/tag')
+def tag():
+    db_session.global_init("db/mainDB.sqlite")
+    db_sess = db_session.create_session()
+    tag = request.args.get('tag_name')
+    tag_posts = db_sess.query(News).filter(News.tag == tag)
+    return render_template('tagPostsView.html', tag=tag, tag_posts=tag_posts)
+
+
 
 if __name__ == "__main__":
     main()
