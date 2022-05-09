@@ -283,6 +283,7 @@ def registration():
         user.set_password(form.password.data)
 
         db_sess.add(user)
+        
         db_sess.commit()
 
         flash('Account has been created!')
