@@ -26,6 +26,7 @@ USER_IMAGE_PATH = 'static/assets/user_images'
 DEFAULT_PROFILE_PICTURE_PATH = 'static/assets/default_images/profile_images/default_pfp.png'
 DEFAULT_HEADER_PICTURE_PATH = 'static/assets/default_images/header_images/default.jpg'
 DEFAULT_PREVIEW_PICTURE_PATH = 'static/assets/default_images/preview_images/default_preview.jpg'
+SERVER_LINK = "https://veryverycoolblog.herokuapp.com/"
 
 with open(DEFAULT_PROFILE_PICTURE_PATH, "rb") as file:
         DEF_PROFILE_PIC = file.read()
