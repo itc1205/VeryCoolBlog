@@ -150,7 +150,8 @@ def post(id):
     params = {
         "post": db_sess.query(News).filter(News.id == id).first(),
     }
-
+    if not post:
+        abort(404)
     params['post'].views_count += 1
     db_sess.merge(params['post'])
     db_sess.commit()

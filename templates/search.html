@@ -3,7 +3,7 @@
     <div class="container d-grid">
         {% if search_result.first() %}
         
-        <h2 class="title section-title" data-name="{{search_string}}">Search</h2>
+        <h2 class="title section-title" data-name="Search">{{search_string}}</h2>
 
         <section class="older-posts section">
 
@@ -35,7 +35,7 @@
         </section>
         
         {% else %}
-        <h2 class="title section-title" data-name="Nothing to match!">Search</h2>
+        <h2 class="title section-title" data-name="Search">Nothing to match!</h2>
         
         
         {% endif %}

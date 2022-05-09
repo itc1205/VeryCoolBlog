@@ -1,14 +1,14 @@
 import email.message
 import smtplib
 
-PASSWORD = "2kfduNa7KcEAVMs"
-EMAIL = "m21899339@gmail.com"
-server = smtplib.SMTP('smtp.gmail.com: 587')
-failure_counter = 0
+PASSWORD = "gonnaihbcridqcmc"
+EMAIL = "s3rver.1@yandex.ru"
+LOGIN = "s3rver.1"
+server = smtplib.SMTP_SSL('smtp.yandex.ru', 465)
 
 def startMailServer():
-    server.starttls()
-    server.login(EMAIL, PASSWORD)
+    server.login(LOGIN, PASSWORD)
+
 
 def sendEmail(mail, html="Example text"):
     try:
