@@ -49,6 +49,7 @@ def postCreated(news):
     mail.startMailServer()
     params = {
         'news': news,
+        "SERVER_LINK": SERVER_LINK
     }
     try:
         for email in db_sess.query(SubEmail):
