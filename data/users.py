@@ -23,7 +23,7 @@ class User(SqlAlchemyBase, UserMixin):
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=dt.now)
     description = sqlalchemy.Column(sqlalchemy.String)
     
-    news = orm.relation("News", back_populates='user', lazy="dynamic")
+    news = orm.relationship("News", back_populates='user', lazy="dynamic")
 
     profile_image = sqlalchemy.Column(sqlalchemy.String)
 
