@@ -21,8 +21,7 @@ def global_init(db_file):
 
     engine = sa.create_engine(conn_str, echo=False)
     __factory = orm.sessionmaker(bind=engine)
-    #Literally biggest fix in my life https://stackoverflow.com/questions/3039567/sqlalchemy-detachedinstanceerror-with-regular-attribute-not-a-relation
-    __factory.expire_on_commit= False
+
     from . import __all_models
 
     SqlAlchemyBase.metadata.create_all(engine)
