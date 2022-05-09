@@ -59,7 +59,7 @@
       font-family: 'Courier New', Courier, monospace;
       background-color: black;
       margin: auto;
-      width: 75%;
+      width: 75rem;
       text-align: center;
     "
   >
@@ -72,11 +72,12 @@
 
       <div class="title-container">{{news.title}}</div>
 
-      <div class="header-image-container" style="width: auto">
+      <div class="header-image-container">
         <img
           src="{{SERVER_LINK}}{{news.preview_img}}"
           alt="image"
           class="header-image"
+          style="width: 75rem;"
         />
       </div>
 
@@ -86,7 +87,7 @@
     </div>
 
     <div>
-      <a href="{{SERVER_LINK}}unsub/?email={{mail}}">Unsubscribe</a>
+      <a href="{{SERVER_LINK}}unsub?email={{mail}}">Unsubscribe</a>
     </div>
   </body>
 </html>
