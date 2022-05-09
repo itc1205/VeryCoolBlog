@@ -126,7 +126,7 @@ def index():
                 "fitness": db_sess.query(News).filter(News.tag == "fitness").order_by(News.views_count).first(),
             },
 
-            "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first().title,
+            "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first(),
             "latest_posts": db_sess.query(News).order_by(desc(News.created_date)).limit(3),
             "trending_news": db_sess.query(News).order_by(News.views_count).limit(5),
             "older_posts": db_sess.query(News).order_by(News.created_date).filter(

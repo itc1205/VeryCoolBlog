@@ -9,8 +9,7 @@
                     <h3 class="headline fancy-border">
                         <span class="place-items-center">Breaking news</span>
                     </h3>
-                    <!--TODO: Fix headline-desc-->
-                    <span class="headline-description">{{breaking_post}}</span>
+                    <span class="headline-description">{% if breaking_post %}{{breaking_post}}{% else %}Some hot news comming up{% endif %}</span>
                 </div>
                 
                 {% for item in latest_posts %}
