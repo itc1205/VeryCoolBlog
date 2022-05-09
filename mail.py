@@ -3,8 +3,7 @@ import smtplib
 
 PASSWORD = "2kfduNa7KcEAVMs"
 EMAIL = "m21899339@gmail.com"
-UNSUB_LINK = ""
-SERVER_LINK = ""
+SERVER_LINK = "https://veryverycoolblog.herokuapp.com/"
 server = smtplib.SMTP('smtp.gmail.com: 587')
 failure_counter = 0
 
