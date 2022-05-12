@@ -4,6 +4,7 @@ data/__pycache__/db_session.cpython-310.pyc
 data/__pycache__/news.cpython-310.pyc
 data/__pycache__/subbedemails.cpython-310.pyc
 data/__pycache__/users.cpython-310.pyc
+db/mainDB.sqlite
 static/assets/user_images/header_images/header_image_2.png
 static/assets/user_images/header_images/header_image_3.png
 static/assets/user_images/header_images/header_image_4.png
