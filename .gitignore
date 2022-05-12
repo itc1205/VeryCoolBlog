@@ -70,3 +70,15 @@ static/assets/user_images/preview_images/preview_image_31.png
 static/assets/user_images/preview_images/preview_image_32.png
 static/assets/user_images/preview_images/preview_image_33.png
 static/assets/user_images/profile_images/profile_image_2.png
+.idea/discord.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/VeryCoolBlog.iml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/inspectionProfiles/Project_Default.xml
+.vscode/settings.json
+data/__pycache__/__all_models.cpython-39.pyc
+data/__pycache__/db_session.cpython-39.pyc
+data/__pycache__/users.cpython-39.pyc
+.idea/.gitignore
