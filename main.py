@@ -496,7 +496,6 @@ def delete_post():
     
     if (not current_user.id == post.user.id) or (not post):
         abort(404)
-
     else:
         db_sess.delete(post)
         db_sess.commit()
