@@ -5,8 +5,11 @@ PASSWORD = "gonnaihbcridqcmc"
 EMAIL = "s3rver.1@yandex.ru"
 LOGIN = "s3rver.1"
 server = smtplib.SMTP_SSL('smtp.yandex.ru', 465)
+server.login(LOGIN, PASSWORD)
 
-def startMailServer():
+
+def restartMailServer():
+    server.connect('smtp.yandex.ru', 465)
     server.login(LOGIN, PASSWORD)
 
 
@@ -23,7 +26,7 @@ def sendEmail(mail, html="Example text"):
         server.sendmail(msg["From"], msg["To"], msg.as_string().encode())
     
     except:
-        startMailServer()
+        restartMailServer()
         server.sendmail(msg["From"], msg["To"], msg.as_string().encode())
 
 

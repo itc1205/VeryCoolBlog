@@ -39,24 +39,23 @@ with open(DEFAULT_PREVIEW_PICTURE_PATH, "rb") as file:
 
 def main():
     db_session.global_init("db/mainDB.sqlite")
-    mail.startMailServer()
     app.run(host='0.0.0.0', port=80)
     mail.stopMailServer()
 
 
 def postCreated(news):
-    with db_session.create_session() as db_sess:
-        mail.startMailServer()
-        params = {
-            'news': news,
-            "SERVER_LINK": SERVER_LINK
-        }
-        try:
-            for email in db_sess.query(SubEmail):
-                params['mail'] = email.email
-                mail.sendEmail(email.email, render_template("mail.html", **params))
-        except:
-            flash("There is a problem with an email")
+    db_session.global_init("db/mainDB.sqlite")
+    db_sess = db_session.create_session()
+    params = {
+        'news': news,
+        "SERVER_LINK": SERVER_LINK
+    }
+    try:
+        for email in db_sess.query(SubEmail):
+            params['mail'] = email.email
+            mail.sendEmail(email.email, render_template("mail.html", **params))
+    except:
+        flash("There is a problem with an email")
 
 ##############################################
 # Error handling
@@ -96,79 +95,79 @@ def genius_handle(e):
 @app.route('/home', methods=["GET", "POST"])
 def index():
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
-        if request.method == "POST":
+    db_sess = db_session.create_session()
+    if request.method == "POST":
 
-            email = request.form["email"]
-            
-            if email:
-                if db_sess.query(SubEmail).filter(SubEmail.email == email).first():
-                    return redirect('/')
-                subEmail = SubEmail()
-                subEmail.email = email
+        email = request.form["email"]
+        
+        if email:
+            if db_sess.query(SubEmail).filter(SubEmail.email == email).first():
+                return redirect('/')
+            subEmail = SubEmail()
+            subEmail.email = email
 
-                db_sess.add(subEmail)
-                db_sess.commit()
+            db_sess.add(subEmail)
+            db_sess.commit()
 
-                mail.sendEmail(email, "Thanks for subscription!")
-            else:
-                abort(404)
-            flash("Mail has been subscribed!")
-            return redirect('/')
+            mail.sendEmail(email, "Thanks for subscription!")
+        else:
+            abort(404)
+        flash("Mail has been subscribed!")
+        return redirect('/')
 
-        if request.method == "GET":
-            params = {
-                "tags": {
-                    "travel": db_sess.query(News).filter(News.tag == "travel").order_by(News.views_count).first(),
-                    "food": db_sess.query(News).filter(News.tag == "food").order_by(News.views_count).first(),
-                    "technology": db_sess.query(News).filter(News.tag == "technology").order_by(News.views_count).first(),
-                    "health": db_sess.query(News).filter(News.tag == "health").order_by(News.views_count).first(),
-                    "nature": db_sess.query(News).filter(News.tag == "nature").order_by(News.views_count).first(),
-                    "fitness": db_sess.query(News).filter(News.tag == "fitness").order_by(News.views_count).first(),
-                },
+    if request.method == "GET":
+        params = {
+            "tags": {
+                "travel": db_sess.query(News).filter(News.tag == "travel").order_by(News.views_count).first(),
+                "food": db_sess.query(News).filter(News.tag == "food").order_by(News.views_count).first(),
+                "technology": db_sess.query(News).filter(News.tag == "technology").order_by(News.views_count).first(),
+                "health": db_sess.query(News).filter(News.tag == "health").order_by(News.views_count).first(),
+                "nature": db_sess.query(News).filter(News.tag == "nature").order_by(News.views_count).first(),
+                "fitness": db_sess.query(News).filter(News.tag == "fitness").order_by(News.views_count).first(),
+            },
 
-                "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first(),
-                "latest_posts": db_sess.query(News).order_by(desc(News.created_date)).limit(3),
-                "trending_news": db_sess.query(News).order_by(News.views_count).limit(5),
-                "older_posts": db_sess.query(News).order_by(News.created_date).filter(
-                    News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
-                        News.id.notin_(db_sess.query(News.id).order_by(
-                            News.views_count).limit(5))
-                ).limit(6),
-                "quick_read": db_sess.query(News).order_by(desc(News.reading_time_in_seconds)).limit(7)
-            }
+            "breaking_post": db_sess.query(News).order_by(desc(News.created_date)).first(),
+            "latest_posts": db_sess.query(News).order_by(desc(News.created_date)).limit(3),
+            "trending_news": db_sess.query(News).order_by(News.views_count).limit(5),
+            "older_posts": db_sess.query(News).order_by(News.created_date).filter(
+                News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
+                    News.id.notin_(db_sess.query(News.id).order_by(
+                        News.views_count).limit(5))
+            ).limit(6),
+            "quick_read": db_sess.query(News).order_by(desc(News.reading_time_in_seconds)).limit(7)
+        }
 
-            return render_template('index.html', **params)
+        return render_template('index.html', **params)
 
 
 @app.route('/post/<int:id>')
 def post(id):
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
+    db_sess = db_session.create_session()
 
-        params = {
-            "post": db_sess.query(News).filter(News.id == id).first(),
-        }
-        if not post:
-            abort(404)
-        params['post'].views_count += 1
-        db_sess.merge(params['post'])
-        db_sess.commit()
-        return render_template('post.html', **params)
+    params = {
+        "post": db_sess.query(News).filter(News.id == id).first(),
+    }
+    if not post:
+        abort(404)
+    params['post'].views_count += 1
+    db_sess.merge(params['post'])
+    db_sess.commit()
+    return render_template('post.html', **params)
 
 
 @app.route('/unsub')
 def unsubscribe_mail():
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
-        email = db_sess.query(SubEmail).filter(
-            SubEmail.email == request.args.get('email')).first()
-        if not email:
-            flash('Error: there is no email like this')
-        else:
-            db_sess.delete(email)
-            flash('Mail has been unsubscribed!')
-        return redirect('/')
+    db_sess = db_session.create_session()
+    email = db_sess.query(SubEmail).filter(
+        SubEmail.email == request.args.get('email')).first()
+    if not email:
+        flash('Error: there is no email like this')
+    else:
+        db_sess.delete(email)
+        flash('Mail has been unsubscribed!')
+    return redirect('/')
 
 ##############################################
 # Login handling
@@ -177,8 +176,8 @@ def unsubscribe_mail():
 @login_manager.user_loader
 def load_user(user_id):
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
-        return db_sess.query(User).get(user_id)
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 class LoginForm(FlaskForm):
@@ -197,17 +196,17 @@ def login():
     }
     
     if form.validate_on_submit():
-        with db_session.create_session() as db_sess:
-            user = db_sess.query(User).filter(User.login == form.login.data).first()
-        
-            if user and user.check_password(form.password.data):
-                login_user(user, remember=form.remember_me.data)
-                flash("User has been sucessfully logged in!")
-                return redirect("/")
-        
-            return render_template('login.html',
-                                message="Wrong login or password",
-                                **params)
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.login == form.login.data).first()
+    
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            flash("User has been sucessfully logged in!")
+            return redirect("/")
+    
+        return render_template('login.html',
+                            message="Wrong login or password",
+                            **params)
         
     return render_template('login.html', **params)
 
@@ -248,47 +247,47 @@ def registration():
         if form.password.data != form.repeat_password.data:
             return render_template('register.html', **params,
                                    message="Password does not match")
-        with db_session.create_session() as db_sess:
+        db_sess = db_session.create_session()
 
-            if db_sess.query(User).filter(User.email == form.email.data).first():
-                return render_template('register.html', **params,
-                                    message="User with this email is already exists")
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', **params,
+                                message="User with this email is already exists")
 
-            if db_sess.query(User).filter(User.login == form.login.data).first():
-                return render_template('register.html', **params,
-                                    message="User with this login is already exists")
+        if db_sess.query(User).filter(User.login == form.login.data).first():
+            return render_template('register.html', **params,
+                                message="User with this login is already exists")
 
-            user = User(
-                email=form.email.data,
-                login=form.login.data,
-                surname=form.surname.data,
-                name=form.name.data,
-                description=form.user_description.data,
-            )
+        user = User(
+            email=form.email.data,
+            login=form.login.data,
+            surname=form.surname.data,
+            name=form.name.data,
+            description=form.user_description.data,
+        )
 
-            profile_image = request.files['profile_image']
+        profile_image = request.files['profile_image']
 
-            profile_image_path = f'{USER_IMAGE_PATH}/profile_images/profile_image_{len(listdir(f"{USER_IMAGE_PATH}/profile_images")) + 1}.png'
-            
-            if profile_image:
-                with open(profile_image_path, "wb") as file:
-                    file.write(profile_image.read())
-            
-            else:
-                with open(profile_image_path, "wb") as file:
-                    file.write(DEF_PROFILE_PIC)
+        profile_image_path = f'{USER_IMAGE_PATH}/profile_images/profile_image_{len(listdir(f"{USER_IMAGE_PATH}/profile_images")) + 1}.png'
+        
+        if profile_image:
+            with open(profile_image_path, "wb") as file:
+                file.write(profile_image.read())
+        
+        else:
+            with open(profile_image_path, "wb") as file:
+                file.write(DEF_PROFILE_PIC)
 
-            user.profile_image = profile_image_path
+        user.profile_image = profile_image_path
 
-            user.set_password(form.password.data)
+        user.set_password(form.password.data)
 
-            db_sess.add(user)
-            
-            db_sess.commit()
+        db_sess.add(user)
+        
+        db_sess.commit()
 
-            flash('Account has been created!')
+        flash('Account has been created!')
 
-            return redirect('/')
+        return redirect('/')
     return render_template('register.html', **params)
 
 
@@ -298,20 +297,20 @@ def registration():
 @app.route('/account/<int:id>')
 def account(id):
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
-        user = db_sess.query(User).filter(User.id == id).first()
-        
-        if user:
-            posts = user.news
-        else:
-            posts = None
-        
-        params = {
-            "user": user,
-            "posts": posts
-        }
-        
-        return render_template('account.html', **params)
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id).first()
+    
+    if user:
+        posts = user.news
+    else:
+        posts = None
+    
+    params = {
+        "user": user,
+        "posts": posts
+    }
+    
+    return render_template('account.html', **params)
 
 #############################################
 # Posts creation
@@ -338,6 +337,7 @@ class CreatePostForm(FlaskForm):
 @login_required
 def createPost():
     db_session.global_init("db/mainDB.sqlite")
+    db_sess = db_session.create_session()
     form = CreatePostForm()
     params = {
         "form": form,
@@ -365,31 +365,31 @@ def createPost():
             with open(preview_img_path, "wb") as file:
                 file.write(DEF_PREVIEW_PIC)
 
-        with db_session.create_session() as db_sess:
+        
 
-            news = News()
-            news.header_img = header_img_path
-            news.preview_img = preview_img_path
-            news.title = form.title.data
-            news.content = form.content.data
-            news.short_description = form.short_description.data
-            news.reading_time_in_seconds = round(
-                len(form.content.data.split())/3, 35)
-            news.reading_time_in_minutes = round(
-                len(form.content.data.split())/201)
-            news.tag = form.tag.data
-            current_user.news.append(news)
+        news = News()
+        news.header_img = header_img_path
+        news.preview_img = preview_img_path
+        news.title = form.title.data
+        news.content = form.content.data
+        news.short_description = form.short_description.data
+        news.reading_time_in_seconds = round(
+            len(form.content.data.split())/3, 35)
+        news.reading_time_in_minutes = round(
+            len(form.content.data.split())/201)
+        news.tag = form.tag.data
+        current_user.news.append(news)
 
-            db_sess.merge(current_user)
-            db_sess.commit()
+        db_sess.merge(current_user)
+        db_sess.commit()
 
-            news = db_sess.query(News).filter(
-                News.header_img == news.header_img).first()
+        news = db_sess.query(News).filter(
+            News.header_img == news.header_img).first()
 
-            postCreated(news)
-            flash('Post has been created!')
+        postCreated(news)
+        flash('Post has been created!')
 
-            return redirect('/')
+        return redirect('/')
 
     return render_template('createNewPost.html', **params)
 
@@ -399,16 +399,16 @@ def createPost():
 @app.route('/older_posts')
 def olderPosts():
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
+    db_sess = db_session.create_session()
 
-        params = {
-            "older_posts": db_sess.query(News).order_by(News.created_date).filter(
-                News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
-                News.id.notin_(db_sess.query(News.id).order_by(
-                    News.views_count).limit(5))
-            ).limit(6)
-        }
-        return render_template('olderPostsView.html', **params)
+    params = {
+        "older_posts": db_sess.query(News).order_by(News.created_date).filter(
+            News.id.notin_(db_sess.query(News.id).order_by(desc(News.created_date)).limit(3))).filter(
+            News.id.notin_(db_sess.query(News.id).order_by(
+                News.views_count).limit(5))
+        ).limit(6)
+    }
+    return render_template('olderPostsView.html', **params)
 
 #############################################
 # Search route
@@ -417,16 +417,16 @@ def olderPosts():
 @app.route('/search')
 def search():
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
+    db_sess = db_session.create_session()
     
-        params = {
-            "search_string": request.args.get('search-field')
-        }
-        
-        params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
-            f"%{params['search_string']}%"
-        ))
-        return render_template('search.html', **params)
+    params = {
+        "search_string": request.args.get('search-field')
+    }
+    
+    params["search_result"] = db_sess.query(News).order_by(News.created_date).filter(News.title.like(
+        f"%{params['search_string']}%"
+    ))
+    return render_template('search.html', **params)
 
 
 #############################################
@@ -437,52 +437,52 @@ def search():
 def edit_post():
     db_session.global_init("db/mainDB.sqlite")
     form = CreatePostForm()
-    with db_session.create_session() as db_sess:
-        post_id = request.args.get('post_id')
-        post = db_sess.query(News).filter(News.id == post_id).first()
-        
-        if (not current_user.id == post.user.id) or (not post):
-            abort(404)
-        
-        else:
-            if request.method == "GET":
+    db_sess = db_session.create_session()
+    post_id = request.args.get('post_id')
+    post = db_sess.query(News).filter(News.id == post_id).first()
+    
+    if (not current_user.id == post.user.id) or (not post):
+        abort(404)
+    
+    else:
+        if request.method == "GET":
 
-                form.title.data = post.title
-                form.content.data = post.content
-                form.short_description.data = post.short_description
-                form.tag.data = post.tag
+            form.title.data = post.title
+            form.content.data = post.content
+            form.short_description.data = post.short_description
+            form.tag.data = post.tag
+        
+            return render_template("createNewPost.html", form=form)
+
+        if form.validate_on_submit:
+            header_img = request.files['header_image']
+            header_img_path = post.header_img
+            if header_img:
+                with open(header_img_path, "wb") as file:
+                    file.write(header_img.read())
             
-                return render_template("createNewPost.html", form=form)
 
-            if form.validate_on_submit:
-                header_img = request.files['header_image']
-                header_img_path = post.header_img
-                if header_img:
-                    with open(header_img_path, "wb") as file:
-                        file.write(header_img.read())
-                
+            preview_img = request.files['preview_image']
+            preview_img_path = post.preview_img
+            if preview_img:
+                with open(preview_img_path, "wb") as file:
+                    file.write(preview_img.read())
 
-                preview_img = request.files['preview_image']
-                preview_img_path = post.preview_img
-                if preview_img:
-                    with open(preview_img_path, "wb") as file:
-                        file.write(preview_img.read())
+            
+            post.header_img = header_img_path
+            post.preview_img = preview_img_path
+            post.title = form.title.data
+            post.content = form.content.data
+            post.short_description = form.short_description.data
+            post.reading_time_in_seconds = round(
+                len(form.content.data.split())/3, 35)
+            post.reading_time_in_minutes = round(
+                len(form.content.data.split())/201)
+            post.tag = form.tag.data
 
-                
-                post.header_img = header_img_path
-                post.preview_img = preview_img_path
-                post.title = form.title.data
-                post.content = form.content.data
-                post.short_description = form.short_description.data
-                post.reading_time_in_seconds = round(
-                    len(form.content.data.split())/3, 35)
-                post.reading_time_in_minutes = round(
-                    len(form.content.data.split())/201)
-                post.tag = form.tag.data
-
-                db_sess.commit()
-                flash('Post has been edited!')
-                return redirect('/')
+            db_sess.commit()
+            flash('Post has been edited!')
+            return redirect('/')
 
 
 
@@ -490,18 +490,18 @@ def edit_post():
 @app.route('/delete_post')
 def delete_post():
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
-        post_id = request.args.get('post_id')
-        post = db_sess.query(News).filter(News.id == post_id).first()
-        
-        if (not current_user.id == post.user.id) or (not post):
-            abort(404)
+    db_sess = db_session.create_session()
+    post_id = request.args.get('post_id')
+    post = db_sess.query(News).filter(News.id == post_id).first()
     
-        else:
-            db_sess.delete(post)
-            db_sess.commit()
-            flash('Post has been deleted!')
-            return redirect('/')
+    if (not current_user.id == post.user.id) or (not post):
+        abort(404)
+
+    else:
+        db_sess.delete(post)
+        db_sess.commit()
+        flash('Post has been deleted!')
+        return redirect('/')
 
 
 @login_required
@@ -509,55 +509,55 @@ def delete_post():
 def edit_profile():
     db_session.global_init("db/mainDB.sqlite")
     form = RegistrationForm()
-    with db_session.create_session() as db_sess:
-        user_id = request.args.get('user_id')
-        user = db_sess.query(User).filter(User.id == user_id).first()
-        if (not current_user.id == user.id) or (not user):
-            abort(404)
+    db_sess = db_session.create_session()
+    user_id = request.args.get('user_id')
+    user = db_sess.query(User).filter(User.id == user_id).first()
+    if (not current_user.id == user.id) or (not user):
+        abort(404)
 
-        else:
-            form.name.data = user.name
-            form.surname.data = user.surname
-            form.user_description.data = user.description
-            form.email.data = user.email
-            form.login.data = user.login
+    else:
+        form.name.data = user.name
+        form.surname.data = user.surname
+        form.user_description.data = user.description
+        form.email.data = user.email
+        form.login.data = user.login
+        
+        if request.method == "GET":
+            return render_template("register.html", form=form)
+
+        if form.validate_on_submit:
             
-            if request.method == "GET":
-                return render_template("register.html", form=form)
+            if form.password.data != form.repeat_password.data:
+                return render_template('register.html', form=form,
+                                    message="Password does not match")
+            db_sess = db_session.create_session()
 
-            if form.validate_on_submit:
-                
-                if form.password.data != form.repeat_password.data:
-                    return render_template('register.html', form=form,
-                                        message="Password does not match")
-                db_sess = db_session.create_session()
+            if db_sess.query(User).filter(User.email == form.email.data).filter(User.id != user.id).first():
+                return render_template('register.html', form=form,
+                                    message="User with this email is already exists")
 
-                if db_sess.query(User).filter(User.email == form.email.data).filter(User.id != user.id).first():
-                    return render_template('register.html', form=form,
-                                        message="User with this email is already exists")
+            if db_sess.query(User).filter(User.login == form.login.data).filter(User.id != user.id).first():
+                return render_template('register.html', form=form,
+                                    message="User with this login is already exists")
 
-                if db_sess.query(User).filter(User.login == form.login.data).filter(User.id != user.id).first():
-                    return render_template('register.html', form=form,
-                                        message="User with this login is already exists")
+            user.email=form.email.data
+            user.login=form.login.data
+            user.surname=form.surname.data
+            user.name=form.name.data
+            user.description=form.user_description.data
 
-                user.email=form.email.data
-                user.login=form.login.data
-                user.surname=form.surname.data
-                user.name=form.name.data
-                user.description=form.user_description.data
+            profile_image = request.files['profile_image']
 
-                profile_image = request.files['profile_image']
+            if profile_image:
+                profile_image_path = user.profile_image
 
-                if profile_image:
-                    profile_image_path = user.profile_image
+                with open(profile_image_path, "wb") as file:
+                    file.write(profile_image.read())
 
-                    with open(profile_image_path, "wb") as file:
-                        file.write(profile_image.read())
-
-                user.set_password(form.password.data)
-                db_sess.commit()
-                flash('Account has been redacted!')
-                return redirect('/')
+            user.set_password(form.password.data)
+            db_sess.commit()
+            flash('Account has been redacted!')
+            return redirect('/')
 
 ######################################
 # View by tag
@@ -565,10 +565,10 @@ def edit_profile():
 @app.route('/tag')
 def tag():
     db_session.global_init("db/mainDB.sqlite")
-    with db_session.create_session() as db_sess:
-        tag = request.args.get('tag_name')
-        tag_posts = db_sess.query(News).filter(News.tag == tag)
-        return render_template('tagPostsView.html', tag=tag, tag_posts=tag_posts)
+    db_sess = db_session.create_session()
+    tag = request.args.get('tag_name')
+    tag_posts = db_sess.query(News).filter(News.tag == tag)
+    return render_template('tagPostsView.html', tag=tag, tag_posts=tag_posts)
 
 
 

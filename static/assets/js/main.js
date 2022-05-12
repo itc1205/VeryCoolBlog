@@ -63,6 +63,8 @@ themeToggleBtn.addEventListener("click", () => {
   }
 });
 
+
+
 const swiper = new Swiper('.swiper', {
   slidesPerView: 1,
   spaceBetween: 20,
@@ -83,3 +85,8 @@ const swiper = new Swiper('.swiper', {
   }
 });
 
+const options = {
+  cache: false
+};
+
+const swup = new Swup(options);

@@ -13,8 +13,11 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css"/>
     <!-- Custom styles -->
     <link rel="stylesheet" href="/static/assets/css/main.css">
+    <!-- Swup -->
+    <script src="https://unpkg.com/swup@latest/dist/swup.min.js"></script>  
 </head>
 <body>
+
     <!-- Header -->
     <header class="header" id="header">
 
@@ -94,8 +97,9 @@
 
     </div>
     <!-- Content block -->
+    <main id="swup" class="transition-fade">
     {% block content %}{% endblock %}
-
+    </main>
     <!-- Footer -->
     <footer class="footer section">
 
@@ -150,9 +154,9 @@
     </ul>
     {% endif %}
     {% endwith %}
-    <!-- Swiper.js -->
-    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
-    <!-- Custom script -->
-    <script src="/static/assets/js/main.js"></script>
+<!-- Swiper.js -->
+<script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+<!-- Custom script -->
+<script src="/static/assets/js/main.js"></script>
 </body>
 </html>
